@@ -19,6 +19,13 @@ Capture the strategy for delivering a reproducible WooCommerce storefront inspir
 - Multi-warehouse/multi-vendor systems or advanced loyalty/referrals.
 - Production migrations, real domains, or live payments without a dedicated ADR.
 
+## Working Assumptions (validated)
+- Payments: sandbox/test-only, no live transactions.
+- Theme: existing theme with customization, no headless delivery.
+- Store locale: EN, currency EUR, shipping worldwide.
+- Demo catalog size: 20 products.
+- Evidence (screenshots/media) is stored in this repository with size controls.
+
 ## Prerequisites
 - Ubuntu VM with Docker and Docker Compose installed.
 - Access to this Git repository; Git + Markdown is the source of truth for docs.
