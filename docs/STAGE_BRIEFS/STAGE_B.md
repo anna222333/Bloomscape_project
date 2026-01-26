@@ -43,13 +43,12 @@ Stage B produces **documents and decisions**, not implementation.
 
 | ID | Deliverable | Description | Format |
 |----|-------------|-------------|--------|
-| D-B-01 | Requirements set | Functional and non-functional requirements | Markdown |
-| D-B-02 | Constraints & assumptions | Documented constraints and assumptions | Markdown |
-| D-B-03 | References | Reference capture and analysis | Markdown |
-| D-B-04 | Updated risk register | Discovery risks added/updated | Markdown |
-| D-B-05 | Updated plan links | Updates to navigation where needed | Markdown |
-
-(Exact file paths to be defined in Stage B execution, under Change Control.)
+| D-B-01 | docs/DISCOVERY/SUCCESS_CRITERIA.md | Goals and measurable success criteria | Markdown |
+| D-B-02 | docs/DISCOVERY/REQUIREMENTS.md | Functional and non-functional requirements | Markdown |
+| D-B-03 | docs/DISCOVERY/CONSTRAINTS_ASSUMPTIONS.md | Constraints and assumptions baseline | Markdown |
+| D-B-04 | docs/DISCOVERY/REFERENCES.md | References and analysis notes | Markdown |
+| D-B-05 | docs/DISCOVERY/SCOPE_BASELINE.md | Scope boundaries for downstream stages | Markdown |
+| D-B-06 | RISK_REGISTER.md (update) | Add/update discovery-related risks | Markdown |
 
 ---
 
@@ -111,6 +110,6 @@ Stage B may be closed only when:
 
 ## 11. Document Status
 
-Status: Draft  
+Status: Active  
 Owner: Project Governance  
 Change control: ADR required

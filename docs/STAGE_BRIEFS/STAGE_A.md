@@ -117,6 +117,33 @@ Stage A may be closed only when:
 
 ## 11. Document Status
 
-Status: Draft  
+Status: Closed  
 Owner: Project Governance  
 Change control: ADR required
+
+---
+
+## 12. Stage Closure Record
+
+Closure date: 2026-01-26  
+Gate: QG-A (Foundation Readiness) — PASSED
+
+Evidence (Git paths):
+- `MASTER_PLAN.md`
+- `README.md`
+- `WORK_BREAKDOWN.md`
+- `QUALITY_GATES.md`
+- `RISK_REGISTER.md`
+- `docs/STAGE_BRIEFS/_TEMPLATE.md`
+- `docs/ADR/ADR-000_TEMPLATE.md`
+- `docs/STAGE_BRIEFS/STAGE_A.md` … `docs/STAGE_BRIEFS/STAGE_I.md`
+- Exports (snapshot): `docs/EXPORTS/stage_a_foundation_artifacts_export.txt`
+- Repo metadata: `docs/REPO_METADATA.md`
+- Contribution rules: `CONTRIBUTING.md`
+
+Acceptance Tests:
+- AT-A1 — PASSED
+- AT-A2 — PASSED
+
+Notes:
+- Stage A is governance-only; no execution/environment changes were performed or documented.
