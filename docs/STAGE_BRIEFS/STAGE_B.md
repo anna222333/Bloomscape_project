@@ -52,6 +52,17 @@ Stage B produces **documents and decisions**, not implementation.
 
 ---
 
+## 6. Stage B Handoff Expectations
+
+Stage Chat B must return a clear discovery package before Stage C planning:
+- A discovery report summarizing success criteria, requirements, constraints, references, and scope baseline status.
+- Evidence snippets or file references that satisfy AT-B1 (deliverables exist), AT-B2 (requirements are testable), and AT-B3 (scope baseline is documented and enforced).
+- Baseline settings for WordPress, persistence, and WooCommerce captured in the supporting skeletons under `docs/DISCOVERY/B_*.md`.
+- An updated `RISK_REGISTER.md` entry showing discovery risks and mitigations.
+- Links to the discovery skeletons (`docs/DISCOVERY/SUCCESS_CRITERIA.md`, `REQUIREMENTS.md`, `CONSTRAINTS_ASSUMPTIONS.md`, `REFERENCES.md`, `SCOPE_BASELINE.md`) plus the new environment/technical baseline placeholders.
+
+---
+
 ## 6. Quality Gates & Acceptance Criteria
 
 ### 6.1 Definition of Done (DoD)
