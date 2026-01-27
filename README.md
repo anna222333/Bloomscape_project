@@ -15,6 +15,23 @@ This repository is the **single Source of Truth (SoT)**.
 
 ---
 
+## Repository Metadata (GitHub About)
+
+Use the following values for the GitHub repository "About" section.
+
+**Short description (About):**  
+Docs-first governance repository for a Bloomscape-inspired WooCommerce skincare store case study (Stage A: Foundation).
+
+**Website:**  
+TBD (add later when a public demo exists)
+
+**Topics:**  
+`woocommerce`, `wordpress`, `ecommerce`, `case-study`, `documentation`, `governance`, `project-management`, `adr`, `quality-gates`
+
+See also: `docs/REPO_METADATA.md`
+
+Exports (snapshots): `docs/EXPORTS/`
+
 ## How to Read This Repository
 
 If you are new to the project, follow this order:
