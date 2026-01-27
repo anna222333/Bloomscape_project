@@ -23,6 +23,12 @@ Rules:
 - External tools (Notion, AppFlowy, diagrams, chats) are **supporting tools only**.
 - This document is authoritative over all stage-level plans.
 
+## Authoritative Paths (Source of Truth)
+- **Authoritative (SoT): repo root** for core governance docs:
+  - `MASTER_PLAN.md`, `WORK_BREAKDOWN.md`, `QUALITY_GATES.md`, `RISK_REGISTER.md`, `README.md`
+- `/docs/*` may contain mirrors or supporting materials, but **root is authoritative** unless an ADR states otherwise.
+- Stage Briefs: **authoritative naming scheme must be single-source** (see note in `docs/STAGE_BRIEFS/`).
+
 ---
 
 ## 3. Project Lifecycle Overview
