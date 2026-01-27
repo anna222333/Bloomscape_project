@@ -57,9 +57,9 @@ Primary deliverables:
 **Purpose:** define requirements, constraints, and references.
 
 Work packages:
-- **B-01:** Business and project goals
-- **B-02:** Functional and non-functional requirements
-- **B-03:** Constraints and assumptions
+- **B-01:** Business and project goals (`docs/DISCOVERY/SUCCESS_CRITERIA.md`, `docs/DISCOVERY/B_ENVIRONMENT.md`)
+- **B-02:** Functional and non-functional requirements (`docs/DISCOVERY/REQUIREMENTS.md`, `docs/DISCOVERY/B_WP_BASELINE.md`, `docs/DISCOVERY/B_WC_BASELINE.md`)
+- **B-03:** Constraints and assumptions (`docs/DISCOVERY/CONSTRAINTS_ASSUMPTIONS.md`, `docs/DISCOVERY/B_PERSISTENCE.md`)
 - **B-04:** Reference analysis
 
 Primary deliverables:
