@@ -112,6 +112,13 @@ Pass criteria:
 
 ---
 
+## QG-DOC1: No Double-Authority Docs
+- There must be **no ambiguous duplicates** of authoritative documents (e.g., two stage-brief naming schemes).
+- If duplicates exist, the repo must contain a **written authority rule** (and ideally a cleanup PR).
+- A single authoritative scheme is documented (see `README.md`).
+
+---
+
 ### Stage B — Discovery
 
 Gate: **QG-B: Requirements Baseline**
