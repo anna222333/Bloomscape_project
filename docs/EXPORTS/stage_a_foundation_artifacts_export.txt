@@ -1,0 +1,2395 @@
+STAGE A (Foundation) — Generated Git-ready Artifacts (Text Export)
+Generated: 2026-01-25 (Europe/Tallinn)
+
+NOTE:
+- This is a plain-text export for convenience.
+- Source of Truth should remain the Git repository with individual Markdown files.
+- Content below is organized by target file path. Copy each section into its respective file.
+
+================================================================================
+FILE: docs/INSTRUCTIONS/STAGE_CHAT_A_FOUNDATION.md
+================================================================================
+# Stage Chat A (Foundation) — Instruction
+
+## Purpose
+
+Stage Chat A отвечает **исключительно** за проектирование и контроль выполнения этапа **A: Foundation** как управленческого этапа.
+
+Цели этапа:
+1. Спроектировать Stage A как **docs-only governance layer** (никакой реализации).
+2. Создать минимально достаточный, но полный каркас Git-документов, шаблонов и правил Change Control.
+3. Обеспечить возможность старта Stage B **без устного контекста**, исключительно на основе Git-репозитория.
+4. Производить только **Git-ready артефакты**:
+   - Markdown-файлы или фрагменты,
+   - список файлов для коммита,
+   - формальный статус.
+
+---
+
+## Scope (Allowed / Forbidden)
+
+### Allowed
+
+Stage Chat A **может и должен**:
+
+1. Проектировать структуру документационного репозитория:
+   - `repo-root/`
+   - `docs/`
+   - соглашения по именованию, путям и ссылкам.
+2. Создавать или обновлять (в виде Git-ready Markdown) следующие deliverables Stage A:
+   - `MASTER_PLAN.md`
+   - `WORK_BREAKDOWN.md`
+   - `RISK_REGISTER.md`
+   - `QUALITY_GATES.md`
+   - `README.md` (как навигационный хаб репозитория)
+   - `docs/STAGE_BRIEFS/`
+     - `_TEMPLATE.md`
+     - `STAGE_A.md` … `STAGE_I.md` (скелеты)
+   - `docs/ADR/ADR-000_TEMPLATE.md`
+3. Формулировать и фиксировать:
+   - правила Change Control,
+   - критерии необходимости ADR,
+   - правила фиксации решений.
+4. Определять:
+   - Definition of Done (DoD) для Stage A,
+   - Acceptance Tests (AT-A1, AT-A2).
+5. Управлять риском **R-004: Scope Creep**:
+   - границы,
+   - триггеры,
+   - меры реагирования.
+
+---
+
+### Forbidden (строго)
+
+Stage Chat A **запрещено**:
+
+1. Любые команды или инструкции для:
+   - VM / Docker / OS / CLI,
+   - установки, запуска, выполнения.
+2. Любые изменения среды:
+   - конфигурации,
+   - Docker,
+   - WordPress,
+   - сетей,
+   - пакетов,
+   - хостинга.
+3. Любая реализация:
+   - код,
+   - деплой,
+   - конфигурация сервисов,
+   - создание контента магазина.
+4. Любые изменения scope, принципов или архитектурных решений **без ADR**.
+   - Разрешено только: инициировать запрос на ADR.
+5. Подмена ролей:
+   - Stage Chat A **не исполняет**, **не внедряет**, **не проводит** изменения.
+   - Его роль — проектирование и контроль.
+
+**Жёсткое правило:**  
+Stage Chat A выдаёт **только** документационные артефакты и правила управления.
+
+---
+
+## Inputs / Source of Truth (SoT)
+
+### Inputs
+
+1. Stage Brief A (Foundation) из сообщения пользователя — **единственный обязательный вход**.
+2. Текущее содержимое Git-файлов (фрагменты или диффы), если они предоставлены пользователем или другими чатами.
+3. Фиксированный контекст проекта и правила Instruction Design Chat.
+
+### Source of Truth (SoT)
+
+1. Единственный SoT — **Git-репозиторий + Markdown-файлы**.
+2. Notion / AppFlowy / другие инструменты — рабочие, но **не SoT**.
+3. Если утверждение не зафиксировано в Git-артефакте — оно **не считается существующим**.
+
+---
+
+## Workflow
+
+### 1) Stage Initialization
+
+Stage Chat A обязан:
+
+1. Зафиксировать границы Stage A:
+   - In-scope: документация, шаблоны, governance.
+   - Out-of-scope: любая реализация.
+2. Разложить Stage A на управленческие work packages:
+   - **A-01**: Repository skeleton и соглашения (paths, naming, linking).
+   - **A-02**: Шаблоны (Stage Briefs, ADR).
+   - **A-03**: Governance (Quality Gates, Risk, Change Control).
+3. Привязать каждый deliverable к:
+   - конкретному файлу,
+   - конкретному пути в репозитории.
+
+---
+
+### 2) Iteration Loop  
+*(одна цель — одна итерация)*
+
+Каждая итерация **обязана**:
+
+1. Выбрать **одну** цель:
+   - один файл, или
+   - одну логически связанную группу файлов.
+2. Сформировать Git-ready патч:
+   - полный файл (если создаётся), или
+   - замену секций с чёткими заголовками.
+3. Прогнать acceptance checks:
+   - **AT-A1** — план читаем и проверяем,
+   - **AT-A2** — границы и запреты однозначны.
+4. Проверить риск **R-004 (Scope Creep)**.
+5. Обновить список файлов для коммита.
+
+---
+
+### 3) Stage Closure
+
+Stage A считается завершённым **только если**:
+
+1. Все deliverables из Stage Brief существуют как файлы.
+2. `docs/STAGE_BRIEFS/` содержит:
+   - `_TEMPLATE.md`,
+   - скелеты `STAGE_A.md` … `STAGE_I.md`.
+3. Правила Change Control и ADR:
+   - задокументированы,
+   - применимы.
+4. Stage B может быть запущен **без устных пояснений**.
+
+---
+
+## Output Contract
+
+Каждый ответ Stage Chat A **обязан содержать**:
+
+1. **Git-ready Markdown**
+   - полный файл — для новых,
+   - секции с чёткими границами — для правок.
+2. **Список файлов для коммита**
+   - с точными путями.
+3. **Статус**
+   - `Готово к передаче Codex (docs-only)`, или
+   - `Блокер: не хватает <X>`, или
+   - `Нужен ADR: <тема>`.
+
+**Запрещённый формат выхода:**
+- любые команды,
+- любые инструкции по изменению среды.
+
+---
+
+## Quality Check (обязателен)
+
+Перед статусом «готово» Stage Chat A проверяет:
+
+1. **Definition of Done**
+   - файлы созданы,
+   - стиль единый,
+   - контекст достаточен для Stage B.
+2. **Acceptance Tests**
+   - AT-A1: читаемость и проверяемость,
+   - AT-A2: жёсткие и явные границы.
+3. **R-004 Scope Creep**
+   - нет выхода за рамки документации,
+   - нет скрытого перехода к реализации.
+4. **Git-ready**
+   - можно коммитить без смысловой правки,
+   - пути и ссылки согласованы.
+
+Если хотя бы один пункт не выполнен — **статус: Блокер**.
+
+---
+
+## Handoff to Documentation Codex
+
+При передаче работы агенту документации (Codex):
+
+1. Сформировать **Codex Task Packet** (на русском):
+   - File list — точные пути,
+   - Patches — Markdown-контент (на английском),
+   - Notes — правила ссылок/нейминга/стиля.
+2. Ограничения Codex в Stage A:
+   - редактирует только указанные файлы,
+   - не выполняет команды,
+   - не меняет среду,
+   - язык документации — **английский**.
+3. Ожидаемый возврат от Codex:
+   - отчёт на русском,
+   - список изменённых файлов,
+   - TODO / конфликты (если есть).
+
+---
+
+
+================================================================================
+FILE: MASTER_PLAN.md
+================================================================================
+# MASTER PLAN
+
+## 1. Document Purpose
+
+This document defines the **master governance and planning framework** for the project.
+
+Its purpose is to:
+- describe the overall project structure and lifecycle,
+- define stages and their intent,
+- act as the top-level Source of Truth for planning,
+- provide navigation to all governance and execution documents.
+
+This document **does not** contain implementation details, technical instructions, or execution steps.
+
+---
+
+## 2. Source of Truth (SoT)
+
+The single Source of Truth for this project is the **Git repository** and its Markdown documents.
+
+Rules:
+- If a statement is not recorded in Git, it is not considered valid.
+- External tools (Notion, AppFlowy, diagrams, chats) are **supporting tools only**.
+- This document is authoritative over all stage-level plans.
+
+---
+
+## 3. Project Lifecycle Overview
+
+The project lifecycle is divided into **nine sequential stages**:
+
+| Stage | Name        | Purpose (High-level) |
+|------:|------------|----------------------|
+| A | Foundation | Governance, documentation, rules, templates |
+| B | Discovery | Requirements, references, constraints |
+| C | Architecture | System and solution design |
+| D | UX/UI | Information architecture and design |
+| E | Build Prep | Technical preparation before build |
+| F | Implementation | Controlled execution |
+| G | Testing | Validation and quality assurance |
+| H | Release | Deployment and handover |
+| I | Closure | Final review and documentation |
+
+Each stage:
+- has a dedicated **Stage Brief**,
+- produces explicit deliverables,
+- has defined acceptance criteria.
+
+---
+
+## 4. Stage Control Principles
+
+1. **Sequential execution**  
+   A stage may start only when the previous stage is formally closed.
+
+2. **Docs-first governance**  
+   No execution is allowed unless the governing documents exist and are approved.
+
+3. **Change Control mandatory**  
+   Any deviation from approved plans requires an ADR.
+
+4. **No implicit decisions**  
+   Decisions must be recorded explicitly in Git documents.
+
+---
+
+## 5. Change Control & ADR
+
+### 5.1 When an ADR is Required
+
+An Architecture Decision Record (ADR) is required when:
+- scope boundaries change,
+- architectural principles change,
+- tooling or platform choices change,
+- stage structure or lifecycle changes.
+
+### 5.2 ADR Authority
+
+- ADRs are binding once approved.
+- An unrecorded decision is considered **non-existent**.
+
+ADR templates are located in:
+```
+docs/ADR/
+```
+
+## 5.3 Change Control Policy (Operational Rules)
+
+These rules define **how changes are proposed, evaluated, and recorded**.
+
+### 5.3.1 Default Rule
+
+If a change is not explicitly approved and recorded, it is **not allowed**.
+
+### 5.3.2 ADR Triggers (ADR Required)
+
+An ADR is mandatory if the change affects any of the following:
+
+- **Scope boundaries** (what is in/out of scope for the project or a stage)
+- **Stage model** (stages A–I, sequencing, stage entry/exit rules)
+- **Deliverables** (adding/removing/renaming deliverables that change stage outputs)
+- **Architecture principles** (structure, integrations, major design choices)
+- **Tooling / platform choices** (hosting, WordPress/WooCommerce setup approach, CI/CD, major plugins/theme strategy)
+- **Quality model** (DoD, Acceptance Tests, Quality Gates, stage closure rules)
+- **Risk model** (risk acceptance rules, high-risk thresholds, mitigation commitments)
+
+### 5.3.3 Change Submission Requirements
+
+Every proposed change must include:
+- a clear description of what changes and why,
+- expected impact on deliverables and stages,
+- risks introduced or changed (reference `RISK_REGISTER.md`),
+- documents that must be updated if the change is accepted.
+
+### 5.3.4 Decision Outcomes
+
+A change proposal results in one of the following:
+- **Accepted** (recorded as ADR; dependent documents updated)
+- **Rejected** (reason recorded; no changes applied)
+- **Deferred** (recorded with conditions and revisit criteria)
+
+### 5.3.5 Consistency Update Rule (Hard Requirement)
+
+If an ADR is accepted, all impacted documents must be updated in the same change set, at minimum:
+- `MASTER_PLAN.md`
+- `WORK_BREAKDOWN.md`
+- relevant `docs/STAGE_BRIEFS/STAGE_<X>.md`
+- `QUALITY_GATES.md` (if quality rules are impacted)
+- `RISK_REGISTER.md` (if risk profile changes)
+
+### 5.3.6 No Silent Overrides
+
+No document may silently override another.
+If a conflict exists, it must be resolved via:
+- a superseding ADR, and
+- explicit updates to conflicting documents.
+
+### 5.3.7 Where ADRs Live
+
+ADR files are stored under:
+- `docs/ADR/`
+
+Use the template:
+- `docs/ADR/ADR-000_TEMPLATE.md`
+
+---
+
+## 6. Quality & Acceptance
+
+Quality control is enforced via:
+- Definition of Done (DoD) per stage,
+- Acceptance Tests (AT) per stage,
+- Explicit Quality Gates.
+
+The authoritative quality rules are defined in:
+```
+QUALITY_GATES.md
+```
+
+---
+
+## 7. Risk Governance
+
+Project risks are:
+- explicitly identified,
+- tracked,
+- reviewed per stage.
+
+The authoritative risk register is:
+```
+RISK_REGISTER.md
+```
+
+---
+
+## 8. Navigation
+
+Primary documents:
+- `README.md` — repository navigation
+- `WORK_BREAKDOWN.md` — stage-level work packages
+- `QUALITY_GATES.md` — acceptance and quality rules
+- `RISK_REGISTER.md` — risk tracking
+
+Stage-specific documents:
+```
+docs/STAGE_BRIEFS/
+```
+
+---
+
+## 9. Scope Boundary Statement
+
+This Master Plan:
+- defines **what is governed**, not **how it is executed**,
+- does **not** authorize implementation,
+- does **not** replace stage briefs.
+
+Any attempt to derive execution steps directly from this document is a **scope violation**.
+
+---
+
+## 10. Document Status
+
+Status: **Active**  
+Owner: Project Governance  
+Change control: **ADR required**
+
+
+
+================================================================================
+FILE: README.md
+================================================================================
+# Project Documentation Repository
+
+## Purpose of This Repository
+
+This repository contains the **complete governance, planning, and documentation system**
+for the project.
+
+It is designed so that:
+- the project can be understood without oral explanations,
+- all decisions are traceable,
+- all stages are governed through documents,
+- execution is strictly separated from governance.
+
+This repository is the **single Source of Truth (SoT)**.
+
+---
+
+## How to Read This Repository
+
+If you are new to the project, follow this order:
+
+1. **MASTER_PLAN.md**  
+   High-level project lifecycle, stages, and governance principles.
+
+2. **WORK_BREAKDOWN.md**  
+   Structured decomposition of work into stages and packages.
+
+3. **QUALITY_GATES.md**  
+   Quality rules, acceptance criteria, and Definition of Done.
+
+4. **RISK_REGISTER.md**  
+   Identified risks and mitigation strategies.
+
+5. **Stage Briefs**  
+   Detailed scope and deliverables per stage.
+
+---
+
+## Repository Structure
+
+```
+/
+├─ README.md
+├─ MASTER_PLAN.md
+├─ WORK_BREAKDOWN.md
+├─ QUALITY_GATES.md
+├─ RISK_REGISTER.md
+└─ docs/
+   ├─ STAGE_BRIEFS/
+   │  ├─ _TEMPLATE.md
+   │  ├─ STAGE_A.md
+   │  ├─ STAGE_B.md
+   │  ├─ STAGE_C.md
+   │  ├─ STAGE_D.md
+   │  ├─ STAGE_E.md
+   │  ├─ STAGE_F.md
+   │  ├─ STAGE_G.md
+   │  ├─ STAGE_H.md
+   │  └─ STAGE_I.md
+   └─ ADR/
+      └─ ADR-000_TEMPLATE.md
+```
+
+---
+
+## Stage-Based Governance Model
+
+The project is executed through **sequential stages (A–I)**.
+
+Rules:
+- Only one stage may be active at a time.
+- A stage may start only after the previous stage is formally closed.
+- Each stage is governed by a **Stage Brief** document.
+- No implementation is allowed without an approved governing document.
+
+---
+
+## Change Control
+
+All non-trivial decisions must be documented.
+
+### Architecture Decision Records (ADR)
+
+An ADR is required when:
+- scope boundaries change,
+- architectural principles change,
+- tooling or platform choices change,
+- stage structure or lifecycle changes.
+
+ADR templates are located at:
+```
+docs/ADR/
+```
+
+Unrecorded decisions are considered **invalid**.
+
+---
+
+## What This Repository Does NOT Contain
+
+This repository does **not** contain:
+- source code,
+- infrastructure configuration,
+- deployment instructions,
+- environment setup steps,
+- content for the final product.
+
+Any such content belongs to execution stages and their dedicated repositories or workspaces.
+
+---
+
+## Authority Statement
+
+If there is a conflict between:
+- chat messages,
+- notes in external tools,
+- personal interpretations,
+
+the **Git documents in this repository always win**.
+
+---
+
+## Document Status
+
+Status: **Active**  
+Owner: Project Governance  
+Change control: **ADR required**
+
+
+
+================================================================================
+FILE: WORK_BREAKDOWN.md
+================================================================================
+# WORK BREAKDOWN STRUCTURE (WBS)
+
+## 1. Document Purpose
+
+This document defines the **work breakdown structure (WBS)** of the project.
+
+Its purpose is to:
+- decompose the project into governed stages,
+- define management-level work packages,
+- provide traceability between stages and deliverables,
+- support planning, tracking, and change control.
+
+This document **does not** describe implementation steps or execution tasks.
+
+---
+
+## 2. WBS Principles
+
+1. **Stage-based decomposition**  
+   The project is divided into sequential stages (A–I).
+
+2. **Governance-first**  
+   Each stage produces documents and decisions before any execution.
+
+3. **No execution detail**  
+   Tasks are defined at a management and control level only.
+
+4. **Traceability**  
+   Every work package maps to explicit deliverables and documents.
+
+---
+
+## 3. Stage-Level Work Breakdown
+
+### Stage A — Foundation
+
+**Purpose:** establish governance, documentation, and control framework.
+
+Work packages:
+- **A-01:** Repository skeleton and navigation
+- **A-02:** Templates (Stage Briefs, ADR)
+- **A-03:** Governance (Quality Gates, Risk, Change Control)
+
+Primary deliverables:
+- MASTER_PLAN.md
+- README.md
+- WORK_BREAKDOWN.md
+- QUALITY_GATES.md
+- RISK_REGISTER.md
+- docs/STAGE_BRIEFS/*
+- docs/ADR/ADR-000_TEMPLATE.md
+
+---
+
+### Stage B — Discovery
+
+**Purpose:** define requirements, constraints, and references.
+
+Work packages:
+- **B-01:** Business and project goals
+- **B-02:** Functional and non-functional requirements
+- **B-03:** Constraints and assumptions
+- **B-04:** Reference analysis
+
+Primary deliverables:
+- STAGE_B.md
+- Requirement and reference documents (defined in Stage B)
+
+---
+
+### Stage C — Architecture
+
+**Purpose:** design the solution structure and system architecture.
+
+Work packages:
+- **C-01:** High-level architecture
+- **C-02:** Component and integration design
+- **C-03:** Architecture validation and ADRs
+
+Primary deliverables:
+- STAGE_C.md
+- Architecture diagrams and decisions (documented)
+
+---
+
+### Stage D — UX / UI
+
+**Purpose:** design user experience and interface structure.
+
+Work packages:
+- **D-01:** Information architecture
+- **D-02:** UX flows
+- **D-03:** UI design system
+
+Primary deliverables:
+- STAGE_D.md
+- UX/UI documentation
+
+---
+
+### Stage E — Build Preparation
+
+**Purpose:** prepare technical execution without implementing.
+
+Work packages:
+- **E-01:** Environment and tooling decisions
+- **E-02:** Implementation planning
+- **E-03:** Execution readiness review
+
+Primary deliverables:
+- STAGE_E.md
+- Approved technical plans
+
+---
+
+### Stage F — Implementation
+
+**Purpose:** controlled execution of approved plans.
+
+Work packages:
+- **F-01:** Implementation tasks
+- **F-02:** Ongoing change control
+- **F-03:** Progress tracking
+
+Primary deliverables:
+- STAGE_F.md
+- Implementation records
+
+---
+
+### Stage G — Testing
+
+**Purpose:** verify quality and compliance.
+
+Work packages:
+- **G-01:** Test planning
+- **G-02:** Test execution
+- **G-03:** Defect tracking and resolution
+
+Primary deliverables:
+- STAGE_G.md
+- Test reports
+
+---
+
+### Stage H — Release
+
+**Purpose:** controlled release and handover.
+
+Work packages:
+- **H-01:** Release preparation
+- **H-02:** Deployment governance
+- **H-03:** Handover documentation
+
+Primary deliverables:
+- STAGE_H.md
+- Release notes
+
+---
+
+### Stage I — Closure
+
+**Purpose:** formal project closure and retrospective.
+
+Work packages:
+- **I-01:** Final review
+- **I-02:** Documentation completion
+- **I-03:** Lessons learned
+
+Primary deliverables:
+- STAGE_I.md
+- Closure report
+
+---
+
+## 4. Change Control
+
+Changes to:
+- stage structure,
+- work package definitions,
+- stage sequencing
+
+require an **ADR**.
+
+---
+
+## 5. Scope Boundary Statement
+
+This WBS:
+- defines **what work exists**, not **how it is executed**,
+- must not be interpreted as an execution plan,
+- is binding for all stages unless superseded by ADR.
+
+---
+
+## 6. Document Status
+
+Status: **Active**  
+Owner: Project Governance  
+Change control: **ADR required**
+
+
+
+================================================================================
+FILE: QUALITY_GATES.md
+================================================================================
+# QUALITY GATES
+
+## 1. Document Purpose
+
+This document defines the project's **quality governance model**:
+- quality gates by stage,
+- Definition of Done (DoD) expectations,
+- Acceptance Tests (AT) structure,
+- review and evidence rules,
+- blockers and non-compliance handling.
+
+This document is governance-only and does not include implementation instructions.
+
+---
+
+## 2. Quality Governance Principles
+
+1. **Docs are evidence**
+   - A deliverable is considered real only if it exists in Git.
+2. **Explicit acceptance**
+   - Each stage must define acceptance tests that can be objectively checked.
+3. **No hidden work**
+   - If a requirement, decision, or constraint is not recorded, it is not valid.
+4. **Stage-by-stage control**
+   - A stage may not start until the previous stage is closed.
+5. **Change control protection**
+   - Non-trivial changes require an ADR and updates to impacted documents.
+
+---
+
+## 3. Definitions
+
+### 3.1 Definition of Done (DoD)
+
+DoD is a **minimum completion standard** for a stage.
+
+A stage is "Done" only if:
+- all required deliverables exist,
+- deliverables are linked from the Stage Brief,
+- acceptance tests pass,
+- change control was respected (ADR where required),
+- blocking risks are addressed or explicitly accepted.
+
+### 3.2 Acceptance Tests (AT)
+
+Acceptance Tests are **stage-specific** checks written as:
+- clear, objective statements,
+- verifiable using Git artifacts,
+- linked to deliverables.
+
+AT naming convention:
+- Stage-level: `AT-<STAGE><NUMBER>` (e.g., `AT-A1`, `AT-B2`)
+- Cross-stage/global (rare): `AT-GLOBAL-<NUMBER>`
+
+### 3.3 Quality Gates
+
+Quality Gates are **mandatory checkpoints** that must be passed to:
+- close the current stage,
+- and/or start the next stage.
+
+---
+
+## 4. Evidence Rules
+
+Evidence must be:
+- stored in Git, or referenced by stable links recorded in Git,
+- reviewable by someone without oral context,
+- organized and linked from the relevant Stage Brief.
+
+Allowed evidence formats:
+- Markdown documents
+- diagrams committed to repo (or referenced with stable links)
+- structured checklists and logs
+
+Not allowed as evidence:
+- oral agreement
+- “it works on my machine”
+- unrecorded chat decisions
+
+---
+
+## 5. Global Minimum Quality Gate (All Stages)
+
+This gate applies to every stage **A–I**.
+
+### QG-0: Governance Compliance Gate
+
+Pass criteria:
+- all stage deliverables exist in Git,
+- Stage Brief links to every deliverable,
+- acceptance tests for the stage are defined and pass,
+- no forbidden (out-of-scope) activity is present,
+- any scope/tooling/lifecycle changes are covered by ADR.
+
+Failing QG-0 is a **hard blocker**: stage cannot close.
+
+---
+
+## 6. Stage Quality Gates (A–I)
+
+### Stage A — Foundation
+
+Gate: **QG-A: Foundation Readiness**
+Pass criteria:
+- MASTER_PLAN.md exists and is coherent
+- README.md provides repository navigation
+- WORK_BREAKDOWN.md exists and matches stage model A–I
+- QUALITY_GATES.md and RISK_REGISTER.md exist
+- Stage Brief template and ADR template exist
+- Stage Brief skeletons A–I exist
+- AT-A1 and AT-A2 are defined and pass in STAGE_A.md
+
+---
+
+### Stage B — Discovery
+
+Gate: **QG-B: Requirements Baseline**
+Pass criteria:
+- requirements are documented and testable
+- constraints and assumptions are explicit
+- scope baseline is recorded
+- key references are captured
+- risks updated
+- acceptance tests AT-B* pass (as defined in STAGE_B.md)
+
+---
+
+### Stage C — Architecture
+
+Gate: **QG-C: Architecture Integrity**
+Pass criteria:
+- architecture overview exists and is consistent
+- key decisions captured as ADRs
+- traceability to Stage B requirements exists
+- risks updated
+- AT-C* pass (as defined in STAGE_C.md)
+
+---
+
+### Stage D — UX/UI
+
+Gate: **QG-D: Design Readiness**
+Pass criteria:
+- information architecture exists
+- UX flows exist for primary journeys
+- UI specs are coherent enough for build planning
+- traceability to requirements exists
+- risks updated
+- AT-D* pass (as defined in STAGE_D.md)
+
+---
+
+### Stage E — Build Preparation
+
+Gate: **QG-E: Execution Readiness**
+Pass criteria:
+- implementation plan exists (management-level)
+- readiness checklist exists
+- tooling/platform decisions are documented (ADR if required)
+- risks updated
+- AT-E* pass (as defined in STAGE_E.md)
+
+---
+
+### Stage F — Implementation
+
+Gate: **QG-F: Implementation Completion**
+Pass criteria:
+- implementation tasks match the approved plan
+- deviations are recorded and approved (ADR where required)
+- evidence exists for test readiness
+- risks updated if needed
+- AT-F* pass (as defined in STAGE_F.md)
+
+---
+
+### Stage G — Testing
+
+Gate: **QG-G: Release Readiness**
+Pass criteria:
+- test plan executed
+- results and evidence recorded
+- critical defects resolved or explicitly accepted
+- go/no-go decision documented
+- AT-G* pass (as defined in STAGE_G.md)
+
+---
+
+### Stage H — Release
+
+Gate: **QG-H: Controlled Release**
+Pass criteria:
+- release checklist passed
+- release notes exist
+- handover docs exist
+- deviations recorded and approved
+- AT-H* pass (as defined in STAGE_H.md)
+
+---
+
+### Stage I — Closure
+
+Gate: **QG-I: Formal Closure**
+Pass criteria:
+- closure report exists
+- lessons learned recorded
+- documentation completeness checklist passed
+- repository is ready for archival/handover
+- AT-I* pass (as defined in STAGE_I.md)
+
+---
+
+## 7. Blockers and Non-Compliance Handling
+
+A stage is **blocked** if any of the following are true:
+- a required deliverable is missing,
+- acceptance tests are missing or fail,
+- scope boundaries are violated,
+- ADR-required change happened without an ADR,
+- evidence is not reviewable from Git.
+
+When blocked:
+- the stage must not be closed,
+- the next stage must not start,
+- the blocker must be recorded in the relevant Stage Brief or governance log (as defined by the stage).
+
+---
+
+## 8. Change Control Impact
+
+Changes to:
+- quality gate criteria,
+- definitions (DoD / AT),
+- stage closure rules,
+
+require an ADR and updates to:
+- this document (QUALITY_GATES.md),
+- affected Stage Brief(s),
+- any dependent governance docs.
+
+---
+
+## 9. Document Status
+
+Status: **Active**  
+Owner: Project Governance  
+Change control: **ADR required**
+
+
+
+================================================================================
+FILE: RISK_REGISTER.md
+================================================================================
+# RISK REGISTER
+
+## 1. Document Purpose
+
+This document is the project's **single Source of Truth (SoT)** for risk governance.
+
+It:
+- records risks, owners, triggers, and mitigations,
+- defines review cadence by stage,
+- supports quality gates and change control.
+
+This document is governance-only and contains no implementation instructions.
+
+---
+
+## 2. Risk Management Rules
+
+### 2.1 Risk IDs and Naming
+Risk ID format:
+- Global risks: `R-###` (e.g., `R-004`)
+- Stage-specific risks (optional): `R-<STAGE>-##` (e.g., `R-B-01`)
+
+### 2.2 Risk Fields (Minimum Set)
+Each risk must define:
+- description and impact,
+- likelihood (L) and impact severity (I),
+- risk score = L × I,
+- triggers / early warning signals,
+- mitigations (preventive) and contingency (reactive),
+- owner role,
+- status.
+
+### 2.3 Scales
+Likelihood (L): 1–5  
+Impact (I): 1–5  
+Score: 1–25
+
+Interpretation:
+- 1–6: Low
+- 7–14: Medium
+- 15–25: High
+
+### 2.4 Review Cadence
+- Reviewed at the start and closure of every stage.
+- Any risk scored **≥ 15** must be explicitly addressed before closing the stage (via mitigation evidence or documented acceptance).
+
+---
+
+## 3. Risk Register (Active)
+
+| ID | Risk | L | I | Score | Triggers / Early Signals | Mitigation (Preventive) | Contingency (Reactive) | Owner | Status |
+|----|------|---:|---:|-----:|--------------------------|--------------------------|------------------------|-------|--------|
+| R-001 | Requirements ambiguity leads to rework | 4 | 4 | 16 | Conflicting statements; inability to write testable requirements; frequent reinterpretations | Enforce Stage B acceptance tests; require traceable, testable requirement language | Pause downstream stages; create ADR to clarify scope baseline | Product/Project Owner | Active |
+| R-002 | Decision drift (unrecorded decisions) | 4 | 4 | 16 | “We decided in chat”; undocumented tool/platform choices; inconsistent docs | ADR required for non-trivial changes; SoT rule enforced (Git only) | Block stage closure until decision is recorded; create corrective ADR | Project Governance | Active |
+| R-003 | Incomplete documentation blocks handover | 3 | 4 | 12 | Missing links; unclear stage outputs; deliverables not discoverable from Stage Briefs | README navigation; Stage Brief deliverables tables; Quality Gates enforcement | Add documentation backlog; block next stage start until fixed | Project Governance | Active |
+| R-004 | Scope creep (governance slipping into execution) | 5 | 5 | 25 | Requests for CLI steps; environment changes; “just implement quickly”; adding deliverables without approval | Strict allowed/forbidden rules; default-forbidden principle; ADR required for scope changes; iteration-level checks | Hard block: stop work and raise ADR request; revert/avoid scope-expanding changes | Project Governance | Active |
+| R-005 | Reference/design mismatch creates inconsistent UX | 3 | 3 | 9 | Multiple conflicting references; unclear design system; inconsistent IA | Stage D traceability to requirements; explicit IA + UI rules | Freeze design changes; document conflicts and resolve via ADR | UX Owner | Active |
+| R-006 | Tooling/platform choice changes late | 3 | 5 | 15 | New constraints discovered; performance/security concerns; vendor limits | Make key choices in Stage C/E with ADR; document constraints early in Stage B | Re-plan Stage E/F; record decision reversal via superseding ADR | Technical Owner | Active |
+| R-007 | Quality gates bypassed due to schedule pressure | 4 | 4 | 16 | “Ship now”; missing AT evidence; stage closure without deliverables | QG-0 Governance Compliance Gate; explicit blockers; enforce closure rules | Block release; require remediation package; document exception via ADR | Project Governance | Active |
+| R-008 | Stakeholder alignment risk (success criteria unclear) | 3 | 4 | 12 | Vague goals; shifting priorities; disagreements on “done” | Stage B: define success metrics and scope baseline; record decisions in Git | Run alignment review; document changes via ADR | Product/Project Owner | Active |
+
+---
+
+## 4. Risk Acceptance Rules
+
+Risk acceptance (choosing to proceed despite risk) requires:
+- explicit statement of what is accepted and why,
+- recorded owner and time horizon,
+- recorded compensating controls (if any),
+- (if acceptance affects scope or quality gates) an ADR.
+
+Unrecorded risk acceptance is invalid.
+
+---
+
+## 5. Linkage to Governance
+
+This register supports:
+- `QUALITY_GATES.md` (blockers and closure criteria),
+- Stage Briefs (stage risks section),
+- ADRs (decision risks and tradeoffs).
+
+---
+
+## 6. Document Status
+
+Status: **Active**  
+Owner: Project Governance  
+Change control: **ADR required**
+
+
+
+================================================================================
+FILE: docs/STAGE_BRIEFS/_TEMPLATE.md
+================================================================================
+# STAGE <X> — <STAGE NAME>
+
+## 1. Stage Purpose
+
+This document defines the **scope, goals, and governance rules** for Stage <X>.
+
+The purpose of this stage is to:
+- clearly define what is in scope and out of scope,
+- specify required deliverables,
+- define acceptance criteria and completion rules,
+- provide a single reference point for controlling this stage.
+
+This document **does not** contain implementation instructions unless explicitly allowed by the stage definition.
+
+---
+
+## 2. Stage Position in Lifecycle
+
+- Previous stage: <STAGE X-1>
+- Next stage: <STAGE X+1>
+
+This stage:
+- may start only after the previous stage is formally closed,
+- must be formally closed before the next stage may begin.
+
+---
+
+## 3. In-Scope
+
+The following activities and outcomes are **explicitly allowed** in this stage:
+
+- <List of allowed activities>
+- <Types of documents or decisions produced>
+- <Forms of analysis or design, if applicable>
+
+Anything not listed here is considered **out of scope**.
+
+---
+
+## 4. Out-of-Scope (Explicit)
+
+The following are **strictly forbidden** in this stage:
+
+- <Implementation activities>
+- <Environment changes>
+- <Execution steps not approved for this stage>
+
+If an activity is not explicitly allowed, it is forbidden by default.
+
+---
+
+## 5. Deliverables
+
+The stage is expected to produce the following deliverables:
+
+| ID | Deliverable | Description | Format |
+|----|-------------|-------------|--------|
+| D-X-01 | <Name> | <Short description> | <Markdown / Diagram / Other> |
+| D-X-02 | <Name> | <Short description> | <Format> |
+
+All deliverables must be:
+- committed to Git,
+- linked from this Stage Brief,
+- reviewable without external context.
+
+---
+
+## 6. Quality Gates & Acceptance Criteria
+
+### 6.1 Definition of Done (DoD)
+
+This stage is considered **done** when:
+
+- all listed deliverables exist,
+- deliverables follow repository standards,
+- scope boundaries are respected,
+- required reviews are completed.
+
+### 6.2 Acceptance Tests
+
+| ID | Test | Description |
+|----|------|-------------|
+| AT-X-01 | Completeness | All deliverables are present and linked |
+| AT-X-02 | Scope Control | No out-of-scope activity detected |
+| AT-X-03 | Readability | Documents are clear and unambiguous |
+
+---
+
+## 7. Dependencies & Inputs
+
+This stage depends on:
+
+- deliverables from previous stages,
+- approved ADRs,
+- external references (if any, documented).
+
+All inputs must be explicitly listed and linked.
+
+---
+
+## 8. Risks & Mitigation
+
+| Risk ID | Description | Mitigation |
+|--------:|-------------|------------|
+| R-X-01 | <Risk description> | <Mitigation approach> |
+
+Risks must align with the global `RISK_REGISTER.md`.
+
+---
+
+## 9. Change Control
+
+Changes affecting:
+- stage scope,
+- deliverables,
+- acceptance criteria
+
+require an **ADR**.
+
+Unrecorded changes are considered invalid.
+
+---
+
+## 10. Stage Closure Rules
+
+This stage may be formally closed only when:
+
+- Definition of Done is satisfied,
+- all Acceptance Tests pass,
+- no unresolved blocking risks remain,
+- closure is recorded in Git.
+
+---
+
+## 11. Document Status
+
+Status: **Draft / Active / Closed**  
+Owner: Project Governance  
+Change control: **ADR required**
+
+
+
+================================================================================
+FILE: docs/ADR/ADR-000_TEMPLATE.md
+================================================================================
+# ADR-000: <TITLE>
+
+- Status: Draft / Proposed / Accepted / Superseded / Rejected
+- Date: YYYY-MM-DD
+- Decision Owner: <Name or Role>
+- Stage: <A|B|C|D|E|F|G|H|I>
+- Related:
+  - Stage Brief: docs/STAGE_BRIEFS/STAGE_<X>.md
+  - Risks: R-XXX (from RISK_REGISTER.md)
+  - Other ADRs: ADR-### (if applicable)
+
+---
+
+## 1. Context
+
+Describe the problem, background, and why a decision is needed.
+
+Include:
+- what triggered the decision,
+- current constraints and assumptions,
+- what will happen if we do not decide now.
+
+---
+
+## 2. Decision Drivers
+
+List the key drivers and priorities, e.g.:
+- maintainability
+- cost/time constraints
+- security/compliance
+- performance
+- usability
+- operational complexity
+
+---
+
+## 3. Considered Options
+
+### Option A — <Name>
+- Summary:
+- Pros:
+- Cons:
+- Risks / tradeoffs:
+
+### Option B — <Name>
+- Summary:
+- Pros:
+- Cons:
+- Risks / tradeoffs:
+
+### Option C — <Name> (optional)
+- Summary:
+- Pros:
+- Cons:
+- Risks / tradeoffs:
+
+---
+
+## 4. Decision
+
+**We decided to:** <clear statement of the selected option>
+
+Decision scope:
+- In scope:
+- Out of scope:
+
+---
+
+## 5. Consequences
+
+### Positive consequences
+- <List>
+
+### Negative consequences / costs
+- <List>
+
+### Follow-up work (documentation only, if applicable)
+- <What documents must be updated because of this ADR>
+
+---
+
+## 6. Validation
+
+How we will validate that this decision is correct:
+- acceptance criteria
+- review checkpoints
+- rollback considerations (governance-level)
+
+---
+
+## 7. Change Control
+
+This ADR may be changed only by:
+- creating a new ADR that supersedes this one, or
+- explicitly changing status to Rejected with justification.
+
+If this ADR affects:
+- scope boundaries,
+- lifecycle/stage model,
+- tooling/platform choices,
+then related documents **must** be updated:
+- MASTER_PLAN.md
+- WORK_BREAKDOWN.md
+- relevant Stage Brief(s)
+- QUALITY_GATES.md (if quality model changes)
+- RISK_REGISTER.md (if risk profile changes)
+
+---
+
+## 8. Notes
+
+Optional notes, references, and links (must be stable and appropriate for Git).
+
+
+
+================================================================================
+FILE: docs/STAGE_BRIEFS/STAGE_A.md
+================================================================================
+# STAGE A — FOUNDATION
+
+## 1. Stage Purpose
+
+Establish the **governance foundation** for the entire project:
+- documentation structure and navigation,
+- templates for stage briefs and ADRs,
+- quality gates and acceptance model,
+- risk register and scope creep controls,
+- change control rules sufficient to start Stage B without oral context.
+
+No implementation is allowed in Stage A.
+
+---
+
+## 2. Stage Position in Lifecycle
+
+- Previous stage: N/A (Stage A is the entry stage)
+- Next stage: Stage B — Discovery
+
+---
+
+## 3. In-Scope
+
+- Create and maintain governance documents in Git.
+- Define repository documentation structure, naming, and linking conventions.
+- Provide templates:
+  - Stage Brief template
+  - ADR template
+- Define quality model:
+  - Definition of Done (DoD)
+  - Acceptance Tests (AT)
+  - Quality Gates
+- Create and maintain risk governance (initial register).
+- Define Change Control rules and ADR usage criteria.
+
+---
+
+## 4. Out-of-Scope (Explicit)
+
+- Any environment changes (hosting, WordPress, Docker, VM, OS).
+- Any implementation or configuration work.
+- Any technical execution instructions (CLI commands, installation steps).
+- Any content creation for the store.
+
+---
+
+## 5. Deliverables
+
+| ID | Deliverable | Description | Format |
+|----|-------------|-------------|--------|
+| D-A-01 | MASTER_PLAN.md | Project governance and stage model | Markdown |
+| D-A-02 | README.md | Repository navigation hub | Markdown |
+| D-A-03 | WORK_BREAKDOWN.md | Stage-level WBS | Markdown |
+| D-A-04 | QUALITY_GATES.md | Quality model and gates | Markdown |
+| D-A-05 | RISK_REGISTER.md | Risk register | Markdown |
+| D-A-06 | docs/STAGE_BRIEFS/_TEMPLATE.md | Stage Brief template | Markdown |
+| D-A-07 | docs/STAGE_BRIEFS/STAGE_A..I.md | Stage brief skeletons | Markdown |
+| D-A-08 | docs/ADR/ADR-000_TEMPLATE.md | ADR template | Markdown |
+
+---
+
+## 6. Quality Gates & Acceptance Criteria
+
+### 6.1 Definition of Done (DoD)
+
+Stage A is done when:
+- all Stage A deliverables exist as files in Git,
+- repository navigation is coherent and self-contained,
+- change control is defined and usable,
+- quality gates and acceptance tests are defined,
+- risk register exists and includes scope creep risk.
+
+### 6.2 Acceptance Tests
+
+| ID | Test | Description |
+|----|------|-------------|
+| AT-A1 | Readability & Verifiability | A new contributor can follow governance docs without oral context |
+| AT-A2 | Scope Boundaries | Forbidden actions are explicit; no implicit execution steps exist |
+
+---
+
+## 7. Dependencies & Inputs
+
+Inputs:
+- Stage A instruction set (governance-only)
+- Existing repository files (if any)
+
+---
+
+## 8. Risks & Mitigation
+
+| Risk ID | Description | Mitigation |
+|--------:|-------------|------------|
+| R-004 | Scope creep (docs drifting into execution) | Explicit forbidden scope; ADR required for scope changes; quality checks per iteration |
+
+---
+
+## 9. Change Control
+
+Any change to:
+- stage model,
+- deliverables list,
+- governance rules,
+requires an ADR.
+
+---
+
+## 10. Stage Closure Rules
+
+Stage A may be closed only when:
+- DoD is satisfied,
+- AT-A1 and AT-A2 pass,
+- all files are committed and linked.
+
+---
+
+## 11. Document Status
+
+Status: Draft  
+Owner: Project Governance  
+Change control: ADR required
+
+
+
+================================================================================
+FILE: docs/STAGE_BRIEFS/STAGE_B.md
+================================================================================
+# STAGE B — DISCOVERY
+
+## 1. Stage Purpose
+
+Define the project discovery outputs:
+- goals and success criteria,
+- functional and non-functional requirements,
+- constraints and assumptions,
+- reference and competitor analysis (if applicable),
+- scope baseline for downstream stages.
+
+Stage B produces **documents and decisions**, not implementation.
+
+---
+
+## 2. Stage Position in Lifecycle
+
+- Previous stage: Stage A — Foundation
+- Next stage: Stage C — Architecture
+
+---
+
+## 3. In-Scope
+
+- Requirements definition (functional / non-functional).
+- Constraints and assumptions documentation.
+- Reference analysis and inspiration capture (documented and traceable).
+- Establish scope baseline and boundaries for later stages.
+- Identify discovery-stage risks and update the global risk register.
+
+---
+
+## 4. Out-of-Scope (Explicit)
+
+- Any environment changes.
+- Any implementation, configuration, or deployment.
+- Any build actions (themes/plugins setup, server setup).
+- Any content production beyond discovery documentation needs.
+
+---
+
+## 5. Deliverables
+
+| ID | Deliverable | Description | Format |
+|----|-------------|-------------|--------|
+| D-B-01 | Requirements set | Functional and non-functional requirements | Markdown |
+| D-B-02 | Constraints & assumptions | Documented constraints and assumptions | Markdown |
+| D-B-03 | References | Reference capture and analysis | Markdown |
+| D-B-04 | Updated risk register | Discovery risks added/updated | Markdown |
+| D-B-05 | Updated plan links | Updates to navigation where needed | Markdown |
+
+(Exact file paths to be defined in Stage B execution, under Change Control.)
+
+---
+
+## 6. Quality Gates & Acceptance Criteria
+
+### 6.1 Definition of Done (DoD)
+
+Stage B is done when:
+- requirements are complete, unambiguous, and traceable,
+- constraints and assumptions are explicit,
+- scope baseline is recorded,
+- relevant risks are updated,
+- outputs are committed to Git and linked.
+
+### 6.2 Acceptance Tests
+
+| ID | Test | Description |
+|----|------|-------------|
+| AT-B1 | Completeness | Required deliverables exist and are linked |
+| AT-B2 | Clarity | Requirements are testable and non-contradictory |
+| AT-B3 | Scope Baseline | Clear boundaries exist for Stage C/D planning |
+
+---
+
+## 7. Dependencies & Inputs
+
+Inputs:
+- Stage A governance docs (MASTER_PLAN, WBS, Quality Gates, Risk Register)
+- Any approved ADRs
+
+---
+
+## 8. Risks & Mitigation
+
+| Risk ID | Description | Mitigation |
+|--------:|-------------|------------|
+| R-B-01 | Requirements ambiguity | Use acceptance tests; require traceable statements |
+| R-004 | Scope creep | Enforce out-of-scope; ADR required for boundary changes |
+
+---
+
+## 9. Change Control
+
+Changes to:
+- scope baseline,
+- requirements priorities that affect architecture,
+require an ADR.
+
+---
+
+## 10. Stage Closure Rules
+
+Stage B may be closed only when:
+- DoD is satisfied,
+- acceptance tests pass,
+- all outputs are committed and linked.
+
+---
+
+## 11. Document Status
+
+Status: Draft  
+Owner: Project Governance  
+Change control: ADR required
+
+
+
+================================================================================
+FILE: docs/STAGE_BRIEFS/STAGE_C.md
+================================================================================
+# STAGE C — ARCHITECTURE
+
+## 1. Stage Purpose
+
+Define the solution architecture based on Stage B outputs:
+- high-level architecture and components,
+- integration boundaries,
+- key design decisions recorded as ADRs,
+- architecture validation against requirements and constraints.
+
+Stage C produces **design and decisions**, not execution.
+
+---
+
+## 2. Stage Position in Lifecycle
+
+- Previous stage: Stage B — Discovery
+- Next stage: Stage D — UX/UI
+
+---
+
+## 3. In-Scope
+
+- Architecture definition (components, boundaries, responsibilities).
+- Decision-making and recording via ADRs.
+- Architecture validation against requirements/constraints.
+- Update risk register for architectural risks.
+
+---
+
+## 4. Out-of-Scope (Explicit)
+
+- Implementation.
+- Environment changes or deployment actions.
+- Tooling setup beyond documented decisions (no execution steps).
+
+---
+
+## 5. Deliverables
+
+| ID | Deliverable | Description | Format |
+|----|-------------|-------------|--------|
+| D-C-01 | Architecture overview | High-level structure and rationale | Markdown |
+| D-C-02 | ADR set | Architecture decisions recorded | Markdown |
+| D-C-03 | Validation notes | Requirements-to-architecture checks | Markdown |
+| D-C-04 | Updated risk register | Architecture risks added/updated | Markdown |
+
+(Exact file paths to be defined in Stage C under Change Control.)
+
+---
+
+## 6. Quality Gates & Acceptance Criteria
+
+### 6.1 Definition of Done (DoD)
+
+Stage C is done when:
+- architecture is documented and internally consistent,
+- key decisions are captured as ADRs,
+- architecture is validated against Stage B requirements,
+- risks are updated and mitigations defined.
+
+### 6.2 Acceptance Tests
+
+| ID | Test | Description |
+|----|------|-------------|
+| AT-C1 | Consistency | Architecture components and boundaries are coherent |
+| AT-C2 | Traceability | Major requirements map to architectural choices |
+| AT-C3 | Decision Logging | Relevant decisions have ADRs |
+
+---
+
+## 7. Dependencies & Inputs
+
+Inputs:
+- Stage B requirements, constraints, scope baseline
+- Stage A governance docs and any approved ADRs
+
+---
+
+## 8. Risks & Mitigation
+
+| Risk ID | Description | Mitigation |
+|--------:|-------------|------------|
+| R-C-01 | Over-complex architecture | Prefer simplicity; document tradeoffs |
+| R-004 | Scope creep | ADR required for major scope/structure changes |
+
+---
+
+## 9. Change Control
+
+Any change to architectural principles or platform/tooling choices requires an ADR.
+
+---
+
+## 10. Stage Closure Rules
+
+Stage C may be closed only when DoD is satisfied and acceptance tests pass.
+
+---
+
+## 11. Document Status
+
+Status: Draft  
+Owner: Project Governance  
+Change control: ADR required
+
+
+
+================================================================================
+FILE: docs/STAGE_BRIEFS/STAGE_D.md
+================================================================================
+# STAGE D — UX / UI
+
+## 1. Stage Purpose
+
+Define the user experience and user interface design:
+- information architecture,
+- user flows,
+- UI system and key screens,
+- UX/UI validation against requirements.
+
+Stage D produces **design artifacts and documentation**, not implementation.
+
+---
+
+## 2. Stage Position in Lifecycle
+
+- Previous stage: Stage C — Architecture
+- Next stage: Stage E — Build Preparation
+
+---
+
+## 3. In-Scope
+
+- Information architecture and navigation model.
+- User flows and key scenarios.
+- UI design system and screen specifications (documentation).
+- Update risk register for UX/UI risks.
+
+---
+
+## 4. Out-of-Scope (Explicit)
+
+- UI implementation (themes, CSS, code).
+- Environment setup or configuration.
+- Content production beyond design documentation needs.
+
+---
+
+## 5. Deliverables
+
+| ID | Deliverable | Description | Format |
+|----|-------------|-------------|--------|
+| D-D-01 | Information architecture | Site structure and navigation | Markdown/Diagram |
+| D-D-02 | UX flows | Primary user journeys | Markdown/Diagram |
+| D-D-03 | UI specs | Key screens and design rules | Markdown |
+| D-D-04 | Updated risk register | UX/UI risks added/updated | Markdown |
+
+(Exact file paths to be defined in Stage D under Change Control.)
+
+---
+
+## 6. Quality Gates & Acceptance Criteria
+
+### 6.1 Definition of Done (DoD)
+
+Stage D is done when:
+- IA and flows are documented and consistent,
+- UI specs are clear enough for build planning,
+- outputs are traceable to requirements,
+- risks are updated.
+
+### 6.2 Acceptance Tests
+
+| ID | Test | Description |
+|----|------|-------------|
+| AT-D1 | Usability coverage | Main user journeys are documented |
+| AT-D2 | Consistency | IA, flows, and UI rules do not conflict |
+| AT-D3 | Traceability | UX/UI decisions map to requirements |
+
+---
+
+## 7. Dependencies & Inputs
+
+Inputs:
+- Stage B requirements
+- Stage C architecture constraints and decisions
+
+---
+
+## 8. Risks & Mitigation
+
+| Risk ID | Description | Mitigation |
+|--------:|-------------|------------|
+| R-D-01 | Design drift from requirements | Traceability checks; review gates |
+| R-004 | Scope creep | ADR for changes affecting scope or lifecycle |
+
+---
+
+## 9. Change Control
+
+Changes to IA that affect scope or architecture require an ADR.
+
+---
+
+## 10. Stage Closure Rules
+
+Stage D may be closed only when DoD is satisfied and acceptance tests pass.
+
+---
+
+## 11. Document Status
+
+Status: Draft  
+Owner: Project Governance  
+Change control: ADR required
+
+
+
+================================================================================
+FILE: docs/STAGE_BRIEFS/STAGE_E.md
+================================================================================
+# STAGE E — BUILD PREPARATION
+
+## 1. Stage Purpose
+
+Prepare for implementation by producing:
+- build and execution plans (governance-level),
+- tooling/environment decisions (recorded),
+- readiness checks and preconditions for implementation.
+
+Stage E produces **plans and approvals**, not implementation.
+
+---
+
+## 2. Stage Position in Lifecycle
+
+- Previous stage: Stage D — UX / UI
+- Next stage: Stage F — Implementation
+
+---
+
+## 3. In-Scope
+
+- Execution planning and sequencing (management-level).
+- Tooling/platform decisions documented (ADR if needed).
+- Readiness review for starting implementation.
+- Update risk register for implementation readiness risks.
+
+---
+
+## 4. Out-of-Scope (Explicit)
+
+- Running setup steps or changing environments.
+- Installing tools, configuring WordPress, deploying anything.
+- Any code or theme/plugin implementation.
+
+---
+
+## 5. Deliverables
+
+| ID | Deliverable | Description | Format |
+|----|-------------|-------------|--------|
+| D-E-01 | Implementation plan | Sequencing and governance for Stage F | Markdown |
+| D-E-02 | Readiness checklist | Preconditions to start execution | Markdown |
+| D-E-03 | Decision log | ADRs for platform/tooling choices | Markdown |
+| D-E-04 | Updated risk register | Readiness risks added/updated | Markdown |
+
+(Exact file paths to be defined in Stage E under Change Control.)
+
+---
+
+## 6. Quality Gates & Acceptance Criteria
+
+### 6.1 Definition of Done (DoD)
+
+Stage E is done when:
+- Stage F has an approved plan and readiness checklist,
+- decisions are documented and traceable,
+- risks are updated and mitigations defined.
+
+### 6.2 Acceptance Tests
+
+| ID | Test | Description |
+|----|------|-------------|
+| AT-E1 | Readiness | Preconditions for implementation are explicit |
+| AT-E2 | Decision Traceability | Tooling/platform decisions have ADRs |
+| AT-E3 | No execution | No setup steps were performed or instructed |
+
+---
+
+## 7. Dependencies & Inputs
+
+Inputs:
+- Stage B requirements
+- Stage C decisions (ADRs)
+- Stage D UX/UI specifications
+
+---
+
+## 8. Risks & Mitigation
+
+| Risk ID | Description | Mitigation |
+|--------:|-------------|------------|
+| R-E-01 | Premature execution | Enforce out-of-scope; readiness gates |
+| R-004 | Scope creep | ADR for boundary changes |
+
+---
+
+## 9. Change Control
+
+Any change affecting execution scope, tooling, or lifecycle requires ADR.
+
+---
+
+## 10. Stage Closure Rules
+
+Stage E may be closed only when DoD is satisfied and acceptance tests pass.
+
+---
+
+## 11. Document Status
+
+Status: Draft  
+Owner: Project Governance  
+Change control: ADR required
+
+
+
+================================================================================
+FILE: docs/STAGE_BRIEFS/STAGE_F.md
+================================================================================
+# STAGE F — IMPLEMENTATION
+
+## 1. Stage Purpose
+
+Execute the approved plans under strict change control:
+- implement features and configurations defined by prior stages,
+- track progress and deviations,
+- record decisions and changes via ADR where required.
+
+Stage F is the primary **execution stage**.
+
+---
+
+## 2. Stage Position in Lifecycle
+
+- Previous stage: Stage E — Build Preparation
+- Next stage: Stage G — Testing
+
+---
+
+## 3. In-Scope
+
+- Implementation tasks approved in Stage E plans.
+- Configuration and build work as explicitly authorized by Stage F plan.
+- Ongoing change control, progress tracking, documentation updates.
+
+---
+
+## 4. Out-of-Scope (Explicit)
+
+- Unplanned or undocumented work.
+- Changes that bypass ADR and quality gates.
+- Scope expansion not approved via ADR.
+
+---
+
+## 5. Deliverables
+
+| ID | Deliverable | Description | Format |
+|----|-------------|-------------|--------|
+| D-F-01 | Implemented outputs | Built components/configurations | As defined |
+| D-F-02 | Change log | ADRs / records for deviations | Markdown |
+| D-F-03 | Progress records | Status and completion evidence | Markdown |
+
+(Exact deliverables and file paths are defined in Stage F planning.)
+
+---
+
+## 6. Quality Gates & Acceptance Criteria
+
+### 6.1 Definition of Done (DoD)
+
+Stage F is done when:
+- implementation plan items are completed,
+- changes are properly recorded,
+- evidence exists for readiness to test,
+- quality gates for implementation are passed.
+
+### 6.2 Acceptance Tests
+
+| ID | Test | Description |
+|----|------|-------------|
+| AT-F1 | Plan compliance | Work matches the approved plan |
+| AT-F2 | Change control | Deviations are tracked and approved |
+| AT-F3 | Evidence | Completion evidence is recorded |
+
+---
+
+## 7. Dependencies & Inputs
+
+Inputs:
+- Stage E approved implementation plan and readiness checklist
+- Stage B/C/D outputs and ADRs
+
+---
+
+## 8. Risks & Mitigation
+
+| Risk ID | Description | Mitigation |
+|--------:|-------------|------------|
+| R-F-01 | Uncontrolled change | Enforce ADR and gates; frequent reviews |
+| R-004 | Scope creep | Reject non-approved scope changes |
+
+---
+
+## 9. Change Control
+
+Any change affecting scope, architecture, or tooling requires ADR.
+
+---
+
+## 10. Stage Closure Rules
+
+Stage F may be closed only when DoD is satisfied and acceptance tests pass.
+
+---
+
+## 11. Document Status
+
+Status: Draft  
+Owner: Project Governance  
+Change control: ADR required
+
+
+
+================================================================================
+FILE: docs/STAGE_BRIEFS/STAGE_G.md
+================================================================================
+# STAGE G — TESTING
+
+## 1. Stage Purpose
+
+Validate the implemented solution:
+- define and execute test plans,
+- record results and defects,
+- confirm compliance with requirements and quality gates.
+
+---
+
+## 2. Stage Position in Lifecycle
+
+- Previous stage: Stage F — Implementation
+- Next stage: Stage H — Release
+
+---
+
+## 3. In-Scope
+
+- Test planning and test execution governance.
+- Test reporting and defect tracking.
+- Validation against requirements and quality gates.
+- Update risks related to quality and defects.
+
+---
+
+## 4. Out-of-Scope (Explicit)
+
+- Adding new features.
+- Scope expansion during testing without ADR.
+- Uncontrolled fixes not tracked and governed.
+
+---
+
+## 5. Deliverables
+
+| ID | Deliverable | Description | Format |
+|----|-------------|-------------|--------|
+| D-G-01 | Test plan | Scope, cases, criteria | Markdown |
+| D-G-02 | Test report | Results and evidence | Markdown |
+| D-G-03 | Defect log | Issues and status | Markdown |
+| D-G-04 | Updated risk register | Testing/quality risks | Markdown |
+
+(Exact file paths to be defined in Stage G under Change Control.)
+
+---
+
+## 6. Quality Gates & Acceptance Criteria
+
+### 6.1 Definition of Done (DoD)
+
+Stage G is done when:
+- test plan is executed,
+- results are recorded,
+- critical defects are resolved or explicitly accepted,
+- release readiness is documented.
+
+### 6.2 Acceptance Tests
+
+| ID | Test | Description |
+|----|------|-------------|
+| AT-G1 | Coverage | Planned test areas are covered |
+| AT-G2 | Evidence | Results are recorded and reviewable |
+| AT-G3 | Release readiness | Clear go/no-go outcome exists |
+
+---
+
+## 7. Dependencies & Inputs
+
+Inputs:
+- Stage B requirements
+- Stage F implementation outputs
+- Quality gates definition
+
+---
+
+## 8. Risks & Mitigation
+
+| Risk ID | Description | Mitigation |
+|--------:|-------------|------------|
+| R-G-01 | Inadequate coverage | Enforce test planning gate |
+| R-004 | Scope creep | ADR required for scope changes |
+
+---
+
+## 9. Change Control
+
+Changes to acceptance criteria or release conditions require ADR.
+
+---
+
+## 10. Stage Closure Rules
+
+Stage G may be closed only when DoD is satisfied and acceptance tests pass.
+
+---
+
+## 11. Document Status
+
+Status: Draft  
+Owner: Project Governance  
+Change control: ADR required
+
+
+
+================================================================================
+FILE: docs/STAGE_BRIEFS/STAGE_H.md
+================================================================================
+# STAGE H — RELEASE
+
+## 1. Stage Purpose
+
+Perform controlled release and handover:
+- release preparation and governance,
+- controlled deployment (as defined),
+- release notes and handover documentation.
+
+---
+
+## 2. Stage Position in Lifecycle
+
+- Previous stage: Stage G — Testing
+- Next stage: Stage I — Closure
+
+---
+
+## 3. In-Scope
+
+- Release readiness confirmation.
+- Release process governance and tracking.
+- Release notes and handover documentation.
+
+---
+
+## 4. Out-of-Scope (Explicit)
+
+- Last-minute feature additions.
+- Unapproved changes bypassing testing and change control.
+- Scope expansion without ADR.
+
+---
+
+## 5. Deliverables
+
+| ID | Deliverable | Description | Format |
+|----|-------------|-------------|--------|
+| D-H-01 | Release notes | Summary of what is released | Markdown |
+| D-H-02 | Handover docs | Operational and usage notes | Markdown |
+| D-H-03 | Release checklist | Evidence-based release readiness | Markdown |
+
+(Exact file paths to be defined in Stage H under Change Control.)
+
+---
+
+## 6. Quality Gates & Acceptance Criteria
+
+### 6.1 Definition of Done (DoD)
+
+Stage H is done when:
+- release readiness is confirmed,
+- release notes and handover docs exist,
+- release activities are recorded,
+- any deviations are documented and approved.
+
+### 6.2 Acceptance Tests
+
+| ID | Test | Description |
+|----|------|-------------|
+| AT-H1 | Readiness | Release checklist passes |
+| AT-H2 | Documentation | Release notes and handover docs exist |
+| AT-H3 | Control | Deviations are recorded and approved |
+
+---
+
+## 7. Dependencies & Inputs
+
+Inputs:
+- Stage G test report and release readiness decision
+- Approved ADRs affecting release
+
+---
+
+## 8. Risks & Mitigation
+
+| Risk ID | Description | Mitigation |
+|--------:|-------------|------------|
+| R-H-01 | Uncontrolled release | Enforce release checklist and approvals |
+| R-004 | Scope creep | ADR required for scope changes |
+
+---
+
+## 9. Change Control
+
+Changes to release scope or go/no-go rules require ADR.
+
+---
+
+## 10. Stage Closure Rules
+
+Stage H may be closed only when DoD is satisfied and acceptance tests pass.
+
+---
+
+## 11. Document Status
+
+Status: Draft  
+Owner: Project Governance  
+Change control: ADR required
+
+
+
+================================================================================
+FILE: docs/STAGE_BRIEFS/STAGE_I.md
+================================================================================
+# STAGE I — CLOSURE
+
+## 1. Stage Purpose
+
+Formally close the project:
+- finalize documentation,
+- record outcomes and lessons learned,
+- confirm scope completion and archival readiness.
+
+---
+
+## 2. Stage Position in Lifecycle
+
+- Previous stage: Stage H — Release
+- Next stage: N/A (final stage)
+
+---
+
+## 3. In-Scope
+
+- Final documentation review and completeness checks.
+- Lessons learned and retrospective documentation.
+- Closure report and archival readiness.
+
+---
+
+## 4. Out-of-Scope (Explicit)
+
+- New features or scope additions.
+- Uncontrolled changes after release without ADR.
+- Implementation work beyond closure documentation.
+
+---
+
+## 5. Deliverables
+
+| ID | Deliverable | Description | Format |
+|----|-------------|-------------|--------|
+| D-I-01 | Closure report | Summary of outcomes and closure evidence | Markdown |
+| D-I-02 | Lessons learned | Retrospective | Markdown |
+| D-I-03 | Documentation checklist | Completeness and archive readiness | Markdown |
+
+(Exact file paths to be defined in Stage I under Change Control.)
+
+---
+
+## 6. Quality Gates & Acceptance Criteria
+
+### 6.1 Definition of Done (DoD)
+
+Stage I is done when:
+- all required documents are complete and linked,
+- closure report exists,
+- lessons learned are recorded,
+- repository is ready for archival or handover.
+
+### 6.2 Acceptance Tests
+
+| ID | Test | Description |
+|----|------|-------------|
+| AT-I1 | Completeness | Required documentation is present and linked |
+| AT-I2 | Traceability | Decisions and outcomes are traceable |
+| AT-I3 | Closure evidence | Closure report demonstrates completion |
+
+---
+
+## 7. Dependencies & Inputs
+
+Inputs:
+- Stage H release outputs
+- All prior stage deliverables
+
+---
+
+## 8. Risks & Mitigation
+
+| Risk ID | Description | Mitigation |
+|--------:|-------------|------------|
+| R-I-01 | Incomplete documentation | Run closure checklist; fix gaps |
+| R-004 | Scope creep | Prevent post-release scope expansion without ADR |
+
+---
+
+## 9. Change Control
+
+Changes to closure criteria require ADR.
+
+---
+
+## 10. Stage Closure Rules
+
+Stage I may be closed only when DoD is satisfied and acceptance tests pass.
+
+---
+
+## 11. Document Status
+
+Status: Draft  
+Owner: Project Governance  
+Change control: ADR required
+

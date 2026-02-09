@@ -1,0 +1,65 @@
+[2026-02-05 20:25:50] COMMAND: ping -c 4 VM_IP_OR_HOSTNAME
+[2026-02-05 20:25:50] OUTPUT:
+ping: VM_IP_OR_HOSTNAME: Temporary failure in name resolution
+
+--------------------------------------------------
+[2026-02-05 20:26:06] COMMAND: ping -c 4 VM_IP_OR_HOSTNAME
+[2026-02-05 20:26:06] OUTPUT:
+ping: VM_IP_OR_HOSTNAME: Temporary failure in name resolution
+
+--------------------------------------------------
+[2026-02-09 20:37:39] COMMAND: ssh username@ip-address
+[2026-02-09 20:37:39] OUTPUT:
+Pseudo-terminal will not be allocated because stdin is not a terminal.
+ssh: Could not resolve hostname ip-address: Temporary failure in name resolution
+
+--------------------------------------------------
+[2026-02-09 21:22:14.622594] docker --version && systemctl status docker
+bash: line 1: docker: command not found
+
+----------------------------------------
+[2026-02-09 21:23:11.230558] docker --version && systemctl status docker
+bash: line 1: docker: command not found
+
+----------------------------------------
+[2026-02-09 21:23:47.606053] docker --version && systemctl status docker
+bash: line 1: docker: command not found
+
+----------------------------------------
+[2026-02-09 21:42:05.988099] # Check Operating System
+cat /etc/os-release
+
+# Check Connectivity (DNS vs IP)
+ping -c 3 8.8.8.8      # Tests internet connection
+ping -c 3 google.com   # Tests DNS resolution
+PRETTY_NAME="Ubuntu 24.04.3 LTS"
+NAME="Ubuntu"
+VERSION_ID="24.04"
+VERSION="24.04.3 LTS (Noble Numbat)"
+VERSION_CODENAME=noble
+ID=ubuntu
+ID_LIKE=debian
+HOME_URL="https://www.ubuntu.com/"
+SUPPORT_URL="https://help.ubuntu.com/"
+BUG_REPORT_URL="https://bugs.launchpad.net/ubuntu/"
+PRIVACY_POLICY_URL="https://www.ubuntu.com/legal/terms-and-policies/privacy-policy"
+UBUNTU_CODENAME=noble
+LOGO=ubuntu-logo
+PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.
+64 bytes from 8.8.8.8: icmp_seq=1 ttl=118 time=0.313 ms
+64 bytes from 8.8.8.8: icmp_seq=2 ttl=118 time=0.172 ms
+64 bytes from 8.8.8.8: icmp_seq=3 ttl=118 time=0.173 ms
+
+--- 8.8.8.8 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2080ms
+rtt min/avg/max/mdev = 0.172/0.219/0.313/0.066 ms
+PING google.com (74.125.201.139) 56(84) bytes of data.
+64 bytes from in-in-f139.1e100.net (74.125.201.139): icmp_seq=1 ttl=118 time=0.451 ms
+64 bytes from in-in-f139.1e100.net (74.125.201.139): icmp_seq=2 ttl=118 time=0.345 ms
+64 bytes from in-in-f139.1e100.net (74.125.201.139): icmp_seq=3 ttl=118 time=0.331 ms
+
+--- google.com ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2043ms
+rtt min/avg/max/mdev = 0.331/0.375/0.451/0.053 ms
+
+----------------------------------------

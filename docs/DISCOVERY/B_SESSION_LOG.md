@@ -1,0 +1,1 @@
+The log indicates that a command to check the Docker version failed because **Docker is not installed** or is not available in the system's PATH.
