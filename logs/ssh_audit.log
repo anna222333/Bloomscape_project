@@ -63,3 +63,25 @@ PING google.com (74.125.201.139) 56(84) bytes of data.
 rtt min/avg/max/mdev = 0.331/0.375/0.451/0.053 ms
 
 ----------------------------------------
+[2026-02-09 22:42:48.452301] # Check if docker binary exists in path
+if command -v docker &> /dev/null; then
+    echo "Docker is installed:"
+    docker --version
+else
+    echo "Docker binary not found."
+fi
+
+# Check for installed packages (apt)
+echo "Checking dpkg for docker packages..."
+dpkg -l | grep -i docker || echo "No docker packages found via dpkg."
+
+# Check for snap installation (common on Ubuntu)
+echo "Checking snap for docker..."
+snap list docker 2>/dev/null || echo "No docker snap found."
+Docker binary not found.
+Checking dpkg for docker packages...
+No docker packages found via dpkg.
+Checking snap for docker...
+No docker snap found.
+
+----------------------------------------
