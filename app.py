@@ -59,16 +59,25 @@ if "last_cli_output_install" not in st.session_state:
 
 # --- 3. CORE FUNCTIONS ---
 
-def write_project_file(path, content):
-    """Позволяет Прорабу записывать файлы в локальное хранилище проекта"""
+def write_project_file(file_path, content):
+    """
+    Физическая запись файла на диск.
+    Создает директории, если их нет.
+    """
     try:
-        full_path = os.path.join(REPO_PATH, path)
+        # Защита от выхода за пределы проекта
+        full_path = os.path.abspath(os.path.join(REPO_PATH, file_path))
+        if not full_path.startswith(os.path.abspath(REPO_PATH)):
+            st.error(f"⛔ Попытка записи вне репозитория: {file_path}")
+            return False
+
         os.makedirs(os.path.dirname(full_path), exist_ok=True)
         with open(full_path, "w", encoding="utf-8") as f:
             f.write(content)
-        return f"✅ Файл {path} успешно записан."
+        return True
     except Exception as e:
-        return f"❌ Ошибка записи: {str(e)}"
+        st.error(f"❌ Ошибка записи файла {file_path}: {str(e)}")
+        return False
 
 # --- ОБНОВЛЕННАЯ ФУНКЦИЯ ЗАГРУЗКИ ИНСТРУКЦИЙ ---
 def load_instruction(role):
@@ -163,6 +172,29 @@ def get_ssh_key():
     response = client.access_secret_version(request={"name": name})
     return response.payload.data.decode("UTF-8")
 
+
+
+def get_ssh_recent_memory(n=100):
+    if not os.path.exists(SSH_LOG_FILE):
+        return "История SSH пуста."
+    try:
+        with open(SSH_LOG_FILE, "r", encoding="utf-8") as f:
+            # Читаем последние 10 000 символов файла, чтобы не перегружать память
+            f.seek(0, os.SEEK_END)
+            file_size = f.tell()
+            f.seek(max(0, file_size - 10000)) # Вот здесь настраивается "глубина" в символах
+            
+            content = f.read()
+            entries = content.split('-'*40)
+            recent = [e.strip() for e in entries if e.strip()][-n:]
+            
+            return "\n\n--- ПОСЛЕДНИЕ ДЕЙСТВИЯ НА СЕРВЕРЕ ---\n" + "\n---\n".join(recent) if recent else "Нет недавних команд."
+    except Exception as e:
+        return f"Ошибка чтения лога: {e}"
+
+
+# Cбор логов и истории
+
 def execute_ssh(command, exec_timeout=None):
     try:
         os.makedirs(os.path.dirname(SSH_LOG_FILE), exist_ok=True)
@@ -189,56 +221,6 @@ def execute_ssh(command, exec_timeout=None):
         return output
     except Exception as e:
         return f"SSH Error: {e}"
-
-def get_ssh_recent_memory(n=5):
-    if not os.path.exists(SSH_LOG_FILE):
-        return "История SSH пуста."
-    try:
-        with open(SSH_LOG_FILE, "r", encoding="utf-8") as f:
-            entries = f.read().split('-'*40)
-            recent = [e.strip() for e in entries if e.strip()][-n:]
-            return "\n\n--- ПОСЛЕДНИЕ ДЕЙСТВИЯ НА СЕРВЕРЕ ---\n" + "\n---\n".join(recent) if recent else "Нет недавних команд."
-    except Exception as e:
-        return f"Ошибка чтения лога: {e}"
-
-def git_local_commit(commit_message, file_paths=None):
-    """Прораб: сохраняет изменения только в локальном репозитории"""
-    try:
-        repo = Repo(REPO_PATH)
-        if file_paths:
-            # Добавляем только конкретные файлы
-            for fp in file_paths:
-                clean_path = os.path.normpath(fp).lstrip('./').lstrip('/')
-                repo.git.add(clean_path)
-        else:
-            # Если файлы не указаны, добавляем всё (но только локально)
-            repo.git.add(A=True)
-
-        if not repo.is_dirty(untracked_files=True):
-            return "ℹ️ Нет локальных изменений для сохранения."
-
-        repo.index.commit(commit_message)
-        return f"✅ Изменения зафиксированы локально: '{commit_message}'"
-    except Exception as e:
-        return f"❌ Локальная ошибка Git: {str(e)}"
-
-def git_push_to_github():
-    """Кнопка 'Применить': отправляет все локальные коммиты в облако"""
-    try:
-        if not os.path.exists("git.txt"): return "❌ Токен GitHub (git.txt) не найден"
-        with open("git.txt", "r") as f: token = f.read().strip()
-
-        repo = Repo(REPO_PATH)
-        remote_url = repo.remotes.origin.url
-        clean_url = remote_url.split('@')[-1].replace("https://", "")
-        auth_url = f"https://{token}@{clean_url}"
-        
-        current_branch = repo.active_branch.name
-        # Отправляем накопленные коммиты
-        repo.git.push(auth_url, current_branch, "-f")
-        return "🚀 Все изменения успешно отправлены на GitHub!"
-    except Exception as e:
-        return f"❌ Ошибка Push: {str(e)}"
 
 def git_sync_logs_only():
     """Оркестратор: работает ТОЛЬКО с файлом логов, не трогая код"""
@@ -271,6 +253,82 @@ def git_sync_logs_only():
         return "✅ Логи SSH синхронизированы."
     except Exception as e:
         return f"❌ Ошибка логов: {str(e)}"
+    
+def append_to_history(action_text):
+    """Физическая запись действия в HISTORY.log"""
+    try:
+        path = os.path.join(REPO_PATH, "docs/HISTORY.log")
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+        with open(path, "a", encoding="utf-8") as f:
+            f.write(f"[{timestamp}] {action_text}\n")
+        return "✅ Запись добавлена в HISTORY.log"
+    except Exception as e:
+        return f"❌ Ошибка записи лога: {str(e)}"
+
+def sync_docs_and_history():
+    """Слушатель: сопоставляет лог и бриф стадии"""
+    try:
+        history_path = "docs/HISTORY.log"
+        stage_path = "docs/STAGE_BRIEFS/STAGE_B.md"
+        
+        if not os.path.exists(history_path) or not os.path.exists(stage_path):
+            return "⚠️ Файлы истории или брифа не найдены."
+
+        with open(history_path, "r") as f:
+            history = f.read()[-2000:]
+        with open(stage_path, "r") as f:
+            current_stage = f.read()
+
+        prompt = f"HISTORY LOG:\n{history}\n\nCURRENT STAGE BRIEF:\n{current_stage}\n\nTask: Update checkboxes [ ] to [x] for completed tasks. Return ONLY full markdown."
+        updated_content = call_gemini(MODEL_FLASH, prompt, "You are a synchronization agent.")
+        
+        write_project_file(stage_path, updated_content)
+        return "✅ Бриф стадии актуализирован."
+    except Exception as e:
+        return f"❌ Ошибка синхронизатора: {str(e)}"
+
+ # --- Функция для локального коммита изменений       
+
+def git_local_commit(commit_message, file_paths=None):
+    """Фиксация изменений в локальном репозитории"""
+    try:
+        repo = Repo(REPO_PATH)
+        if file_paths:
+            for fp in file_paths:
+                clean_path = os.path.normpath(fp).lstrip('./').lstrip('/')
+                repo.git.add(clean_path)
+        else:
+            repo.git.add(A=True)
+
+        if not repo.is_dirty(untracked_files=True):
+            return "ℹ️ Нет изменений для коммита."
+
+        repo.index.commit(commit_message)
+        return f"✅ Локальный коммит: {commit_message}"
+    except Exception as e:
+        return f"❌ Ошибка Git: {str(e)}"
+
+ # --- Функция для пуша в GitHub       
+
+def git_push_to_github():
+    """Пуш накопленных коммитов в удаленный репозиторий"""
+    try:
+        if not os.path.exists("git.txt"): return "❌ Файл git.txt с токеном не найден"
+        with open("git.txt", "r") as f: token = f.read().strip()
+
+        repo = Repo(REPO_PATH)
+        remote_url = repo.remotes.origin.url
+        # Очистка URL для авторизации по токену
+        clean_url = remote_url.split('@')[-1].replace("https://", "")
+        auth_url = f"https://{token}@{clean_url}"
+        
+        current_branch = repo.active_branch.name
+        repo.git.push(auth_url, current_branch, "-f")
+        return "🚀 Все изменения успешно отправлены на GitHub!"
+    except Exception as e:
+        return f"❌ Ошибка Push: {str(e)}"
+
 def get_project_context():
     context_sections = []
     
@@ -285,16 +343,29 @@ def get_project_context():
         full_path = os.path.join(REPO_PATH, path)
         if os.path.exists(full_path):
             with open(full_path, "r", encoding="utf-8") as f:
-                context_sections.append(f"[{path}]:\n{f.read()[:1000]}")
+                context_sections.append(f"[{path}]:\n{f.read()[:10000]}")
 
-    # 2. ТЕКУЩАЯ СТАДИЯ (Stage Briefs)
-    # Позволяет Архитектору понять, где мы сейчас (Stage B -> C)
-    context_sections.append("\n=== CURRENT STAGE BRIEF ===")
-    stage_path = "docs/STAGE_BRIEFS/B_Platform_Baseline.md" # Или динамически определять
-    full_stage_path = os.path.join(REPO_PATH, stage_path)
-    if os.path.exists(full_stage_path):
-        with open(full_stage_path, "r", encoding="utf-8") as f:
-            context_sections.append(f"[CURRENT STAGE]:\n{f.read()[:1000]}")
+    # 2. АВТО-ОПРЕДЕЛЕНИЕ ТЕКУЩЕГО БРИФА (По маркеру _current)
+    context_sections.append("\n=== CURRENT ACTIVE STAGE BRIEF ===")
+    stage_dir = os.path.join(REPO_PATH, "docs/STAGE_BRIEFS/")
+    
+    if os.path.exists(stage_dir):
+        # Ищем файлы, которые содержат '_current' в названии
+        briefs = [f for f in os.listdir(stage_dir) if "_current" in f and f.endswith(".md")]
+        
+        if briefs:
+            # Если вдруг таких файлов несколько (ошибка), берем первый из списка
+            current_brief = briefs[0] 
+            full_path = os.path.join(stage_dir, current_brief)
+            try:
+                with open(full_path, "r", encoding="utf-8") as f:
+                    context_sections.append(f"[ACTIVE TASK LIST - {current_brief}]:\n{f.read()[:1500]}")
+            except Exception as e:
+                context_sections.append(f"⚠️ Ошибка чтения брифа: {e}")
+        else:
+            context_sections.append("⚠️ ВНИМАНИЕ: Текущий бриф (*_current.md) не найден в docs/STAGE_BRIEFS/")
+    else:
+        context_sections.append("⚠️ Директория STAGE_BRIEFS отсутствует.")
 
     # 3. АРХИТЕКТУРНЫЕ РЕШЕНИЯ (ADR)
     context_sections.append("\n=== ARCHITECTURE DECISIONS (ADR) ===")
@@ -338,13 +409,20 @@ def get_project_structure():
 
 def get_architect_context():
     """Специальный расширенный контекст для Архитектора"""
-    base_context = get_project_context()
+    # 1. Структура проекта
     structure = get_project_structure()
+    
+    # 2. Базовый контекст (Master Plan, ADR, Skills, SSH Logs)
+    base_context = get_project_context()
+
+    # 3. Проверка ворот качества (Quality Gates)
     q_gates = ""
     q_path = os.path.join(REPO_PATH, "QUALITY_GATES.md")
     if os.path.exists(q_path):
         with open(q_path, "r", encoding="utf-8") as f:
             q_gates = f"\n\n=== QUALITY GATES ===\n{f.read()[:1000]}"
+            
+    # Убрали несуществующую переменную read_only_data
     return f"{structure}\n\n{base_context}\n{q_gates}"
 
 def call_gemini(model_id, prompt, system_instruction, image_bytes=None):
@@ -354,9 +432,100 @@ def call_gemini(model_id, prompt, system_instruction, image_bytes=None):
             contents.append(types.Part.from_bytes(data=image_bytes, mime_type="image/png"))
         contents.append(prompt)
         response = client_gemini.models.generate_content(
-            model=model_id, config=types.GenerateContentConfig(system_instruction=system_instruction), contents=contents
+            model=model_id, 
+            config=types.GenerateContentConfig(system_instruction=system_instruction), 
+             contents=contents
         )
-        return response.text if response and response.text else "⚠️ Пустой ответ."
+        text = response.text if response and response.text else "⚠️ Пустой ответ."
+        
+
+       # --- ЛОГИКА АРХИТЕКТОРА ---
+        updated_arch_docs = []
+        
+        # Список путей, куда Архитектору вход ЗАПРЕЩЕН
+        FORBIDDEN_PATHS = ["docs/INSTRUCTIONS", "docs/skills"]
+
+        def is_write_prohibited(path):
+            # Проверяем, не начинается ли путь с одного из запрещенных префиксов
+            return any(path.startswith(forbidden) for forbidden in FORBIDDEN_PATHS)
+
+        # Обработка ADR (специфический тег)
+        if "[WRITE_ADR:" in text:
+            parts = text.split("[WRITE_ADR:")[1].split("]")[0].split("|")
+            if len(parts) >= 2:
+                adr_name, content = parts[0].strip(), "|".join(parts[1:]).strip()
+                path = f"docs/ADR/{adr_name}"
+                # Тут проверка обычно не нужна (ADR разрешены), но для системности:
+                if not is_write_prohibited(path):
+                    write_project_file(path, content)
+                    updated_arch_docs.append(path)
+                    st.toast(f"🏛 ADR зафиксирован: {adr_name}")
+
+        # Универсальный тег записи для Архитектора (теперь он может писать любые файлы в docs)
+        # Формат: [WRITE_DOC: path/to/file.md | content]
+        if "[WRITE_DOC:" in text:
+            parts = text.split("[WRITE_DOC:")[1].split("]")[0].split("|")
+            if len(parts) >= 2:
+                path, content = parts[0].strip(), "|".join(parts[1:]).strip()
+                
+                # Проверка: путь должен быть внутри docs и не быть в черном списке
+                if path.startswith("docs/") and not is_write_prohibited(path):
+                    write_project_file(path, content)
+                    updated_arch_docs.append(path)
+                    st.toast(f"🏛 Файл обновлен: {path}")
+                else:
+                    st.error(f"⛔ Доступ запрещен! Архитектор не может изменять: {path}")
+
+        # Специфический тег для Мастер-плана (оставляем для удобства)
+        if "[UPDATE_MASTER:" in text:
+            content = text.split("[UPDATE_MASTER:")[1].split("]")[0].strip()
+            path = "docs/MASTER_PLAN.md"
+            write_project_file(path, content)
+            updated_arch_docs.append(path)
+            st.toast("🏛 MASTER_PLAN обновлен")
+
+        # --- ФИНАЛИЗАЦИЯ (Commit & Push) ---
+        if updated_arch_docs:
+            git_local_commit("arch: strategic documentation update", file_paths=updated_arch_docs)
+            if "[GIT_PUSH]" in text:
+                push_res = git_push_to_github()
+                st.toast(push_res)
+                text += f"\n\n**Системное уведомление:** {push_res}"
+                
+                # --- ЛОГИКА ЧТЕНИЯ ФАЙЛОВ ПО ЗАПРОСУ ---
+        if "[READ_FILE:" in text:
+            try:
+                # Извлекаем путь: [READ_FILE: src/main.py] -> src/main.py
+                file_path_to_read = text.split("[READ_FILE:")[1].split("]")[0].strip()
+                full_path = os.path.join(REPO_PATH, file_path_to_read)
+                
+                if os.path.exists(full_path) and os.path.isfile(full_path):
+                    with open(full_path, "r", encoding="utf-8") as f:
+                        content = f.read()
+                    
+                    # Ограничиваем объем, чтобы не "взорвать" контекстное окно
+                    if len(content) > 100000:
+                        content = content[:100000] + "\n... [Файл обрезан из-за размера]"
+                    
+                    file_feedback = f"\n\n Содержимое файла `{file_path_to_read}`:\n```python\n{content}\n```"
+                    # Добавляем содержимое прямо в текущий ответ, чтобы пользователь видел, 
+                    # что Архитектор "прочитал" файл.
+                    text += file_feedback
+                    st.toast(f"📖 Файл {file_path_to_read} прочитан")
+                else:
+                    text += f"\n\n⚠️ Ошибка: Файл `{file_path_to_read}` не найден."
+            except Exception as e:
+                text += f"\n\n❌ Ошибка при чтении: {str(e)}"
+
+        # --- ЛОГИКА АВТОМАТИЧЕСКОГО ЛОГИРОВАНИЯ ---
+        if "[LOG_ACTION:" in text:
+            # Извлекаем данные между [LOG_ACTION: и ]
+            action_data = text.split("[LOG_ACTION:")[1].split("]")[0].strip()
+            # Дописываем в историю (функция append_to_history должна быть в коде)
+            res = append_to_history(action_data)
+            st.toast(res)
+            
+        return text
     except Exception as e:
         return f"❌ Ошибка Gemini: {str(e)}"
 
@@ -391,19 +560,37 @@ with col_arch:
     with st.container(height=500, border=True):
         for m in st.session_state.arch_history:
             st.chat_message(m["role"]).write(m["content"])
+
     if p := st.chat_input("Глобальная стратегия...", key="in_arch"):
+        # 1. Сначала сохраняем сообщение пользователя в историю
         st.session_state.arch_history.append({"role": "user", "content": p})
-        # Получаем расширенный контекст для Архитектора (структура + документы)
+        
+        # 2. Формируем контекст истории (берем последние 10 сообщений ДО текущего)
+        # Мы не берем самое последнее сообщение p, так как оно пойдет в CURRENT REQUEST
+        history_context = "\n".join([
+            f"{'User' if m['role'] == 'user' else 'Architect'}: {m['content']}" 
+            for m in st.session_state.arch_history[-11:-1]
+        ])
+
+        # 3. Получаем контекст проекта
         full_context = get_architect_context()
+
+        # 4. Собираем финальный промпт
         prompt = f"""
 PROJECT CONTEXT & STRUCTURE:
 {full_context}
 
-REQUEST:
+RECENT CHAT HISTORY:
+{history_context if history_context else "No previous conversation."}
+
+CURRENT REQUEST:
 {p}
 """
+
         with st.spinner("Архитектор анализирует структуру и документацию..."):
             res = call_gemini(MODEL_PRO, prompt, load_instruction("architect"))
+            
+        # 5. Сохраняем ответ и обновляем интерфейс
         st.session_state.arch_history.append({"role": "assistant", "content": res})
         st.rerun()
 
@@ -477,23 +664,6 @@ with col_fore:
         
         st.rerun()
 
-    # Блок управления изменениями
-    st.markdown("---")
-    c1, c2 = st.columns(2)
-    
-    # Кнопка для Прораба (локально)
-    if c1.button("💾 Сохранить локально", use_container_width=True):
-        with st.spinner("Фиксация локально..."):
-            summary = call_gemini(MODEL_FLASH, f"History: {st.session_state.foreman_history[-2:]}", "Summarize for git commit.")
-            msg = git_local_commit(f"feat: {summary[:50]}")
-            st.toast(msg)
-
-    # Кнопка твоего подтверждения (в облако)
-    if c2.button("🚀 ПРИМЕНИТЬ (Push)", type="primary", use_container_width=True):
-        with st.spinner("Пушим на GitHub..."):
-            res = git_push_to_github()
-            st.success(res)
-
 with col_crit:
     st.markdown("### 🔍 Критик")
     with st.container(height=500, border=True):
@@ -539,11 +709,22 @@ with col_orch:
     with st.container(height=400, border=True):
         st.code("\n".join(st.session_state.orch_history), language="bash")
 
-    # Кнопка Оркестратора только для логов
-    if st.button("🔄 Sync SSH Logs to GitHub", use_container_width=True):
-        with st.spinner("Синхронизация логов..."):
-            res = git_sync_logs_only()
+    # Единая кнопка синхронизации и обновления статуса
+    if st.button("🔄 Sync & Update Project Status", use_container_width=True, type="primary"):
+        with st.spinner("Синхронизация документации и логов..."):
+            # 1. Запуск "Слушателя" (Обновление STAGE_B.md на основе HISTORY.log)
+            status_msg = sync_docs_and_history() 
+            st.toast(status_msg)
+            
+            # 2. Локальный коммит обновленного брифа и истории
+            git_local_commit("docs: update stage progress and history log", 
+                             file_paths=["docs/STAGE_BRIEFS/STAGE_B.md", "docs/HISTORY.log"])
+            
+            # 3. Пуш логов SSH и документов в GitHub
+            # Используем нашу изолированную функцию, чтобы не затронуть черновики Прораба
+            res = git_sync_logs_only() 
+            
             if "✅" in res:
-                st.toast(res)
+                st.success("Статус обновлен, логи синхронизированы!")
             else:
-                st.error(res)
+                st.error(f"Ошибка синхронизации: {res}")
