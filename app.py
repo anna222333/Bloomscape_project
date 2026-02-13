@@ -1,5 +1,6 @@
 import streamlit as st
 import os
+from dotenv import load_dotenv
 import io
 import datetime
 import base64
@@ -17,13 +18,14 @@ from skillkit import SkillManager  # Добавляем импорт SkillKit
 
 
 # --- 1. CONFIGURATION ---
-PROJECT_ID = "positive-leaf-462823-h2"
+load_dotenv()
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+PROJECT_ID = os.getenv("GCP_PROJECT_ID")
+SECRET_ID = os.getenv("SSH_KEY_SECRET_ID")
+VM_IP = os.getenv("VM_IP")
+VM_USER = os.getenv("VM_USER")
+REPO_PATH = os.getenv("REPO_PATH", ".")
 LOCATION = "us-central1"
-SECRET_ID = "ssh-private-key"
-VM_IP = "34.121.114.145"
-VM_USER = "anna_sonny48"
-REPO_PATH = os.getcwd()
-GEMINI_API_KEY = "AIzaSyDWXjNwZlv7k2B2WmxAdI9aCVFeDiF3blg"
 SSH_LOG_FILE = "logs/ssh_audit.log"
 MODEL_PRO = "models/gemini-3-pro-preview"
 MODEL_FLASH = "models/gemini-3-flash-preview"
