@@ -20,11 +20,11 @@ from skillkit import SkillManager  # Добавляем импорт SkillKit
 # --- 1. CONFIGURATION ---
 load_dotenv()
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-PROJECT_ID = os.getenv("GCP_PROJECT_ID")
-SECRET_ID = os.getenv("SSH_KEY_SECRET_ID")
+PROJECT_ID = os.getenv("PROJECT_ID")
+SECRET_ID = os.getenv("SECRET_ID")
 VM_IP = os.getenv("VM_IP")
 VM_USER = os.getenv("VM_USER")
-REPO_PATH = os.getenv("REPO_PATH", ".")
+REPO_PATH = os.getcwd()
 LOCATION = "us-central1"
 SSH_LOG_FILE = "logs/ssh_audit.log"
 MODEL_PRO = "models/gemini-3-pro-preview"
@@ -39,16 +39,18 @@ client_gemini = genai.Client(api_key=GEMINI_API_KEY)
 # Инициализируем без аргументов
 skill_manager = SkillManager() 
 
+# --- Инициализация SkillKit (Исправлено) ---
 try:
-    # Указываем путь к навыкам прямо в методе discover
-    # Если папки нет, сначала создадим её
+    # Если папки нет, создаем её
     if not os.path.exists("docs/skills/"):
         os.makedirs("docs/skills/", exist_ok=True)
         
-    skill_manager.discover(path="docs/skills/") # Находим навыки по нужному пути
+    # Передаем путь прямо при создании менеджера, если библиотека это поддерживает
+    # Либо вызываем discover() без аргументов
+    skill_manager = SkillManager() 
+    skill_manager.discover() # Он сам найдет папку docs/skills, если она в корне
 except Exception as e:
     st.error(f"Ошибка SkillKit: {e}")
-
 # --- 2. SESSION STATE INITIALIZATION ---
 if "last_cli_output_search" not in st.session_state:
     st.session_state.last_cli_output_search = ""
@@ -56,6 +58,17 @@ if "last_cli_output_install" not in st.session_state:
     st.session_state.last_cli_output_install = ""
 
 # --- 3. CORE FUNCTIONS ---
+
+def write_project_file(path, content):
+    """Позволяет Прорабу записывать файлы в локальное хранилище проекта"""
+    try:
+        full_path = os.path.join(REPO_PATH, path)
+        os.makedirs(os.path.dirname(full_path), exist_ok=True)
+        with open(full_path, "w", encoding="utf-8") as f:
+            f.write(content)
+        return f"✅ Файл {path} успешно записан."
+    except Exception as e:
+        return f"❌ Ошибка записи: {str(e)}"
 
 # --- ОБНОВЛЕННАЯ ФУНКЦИЯ ЗАГРУЗКИ ИНСТРУКЦИЙ ---
 def load_instruction(role):
@@ -188,40 +201,76 @@ def get_ssh_recent_memory(n=5):
     except Exception as e:
         return f"Ошибка чтения лога: {e}"
 
-def sync_to_git(commit_message, file_path):
-    """Синхронизация с принудительным пушем для Stage B"""
+def git_local_commit(commit_message, file_paths=None):
+    """Прораб: сохраняет изменения только в локальном репозитории"""
     try:
-        if not os.path.exists("git.txt"): return "❌ git.txt не найден"
+        repo = Repo(REPO_PATH)
+        if file_paths:
+            # Добавляем только конкретные файлы
+            for fp in file_paths:
+                clean_path = os.path.normpath(fp).lstrip('./').lstrip('/')
+                repo.git.add(clean_path)
+        else:
+            # Если файлы не указаны, добавляем всё (но только локально)
+            repo.git.add(A=True)
+
+        if not repo.is_dirty(untracked_files=True):
+            return "ℹ️ Нет локальных изменений для сохранения."
+
+        repo.index.commit(commit_message)
+        return f"✅ Изменения зафиксированы локально: '{commit_message}'"
+    except Exception as e:
+        return f"❌ Локальная ошибка Git: {str(e)}"
+
+def git_push_to_github():
+    """Кнопка 'Применить': отправляет все локальные коммиты в облако"""
+    try:
+        if not os.path.exists("git.txt"): return "❌ Токен GitHub (git.txt) не найден"
         with open("git.txt", "r") as f: token = f.read().strip()
 
         repo = Repo(REPO_PATH)
-
-        # 1. Авторизация
         remote_url = repo.remotes.origin.url
-        # Очищаем URL от старых токенов, если они там были
         clean_url = remote_url.split('@')[-1].replace("https://", "")
         auth_url = f"https://{token}@{clean_url}"
-
-        # 2. Нормализация пути (убираем ./ и /)
-        clean_path = os.path.normpath(file_path).lstrip('./').lstrip('/')
-
-        # 3. Добавление и коммит
-        repo.git.add(clean_path, force=True)
-
-        if not repo.is_dirty(untracked_files=True):
-            return "ℹ️ Изменений не обнаружено."
-
-        repo.index.commit(commit_message)
+        
         current_branch = repo.active_branch.name
-
-        # 4. САМОЕ ВАЖНОЕ: Принудительный пуш (force)
-        # Мы используем repo.git.push, чтобы передать флаг '-f'
-        # Это предотвратит ошибку [rejected] (fetch first)
+        # Отправляем накопленные коммиты
         repo.git.push(auth_url, current_branch, "-f")
-
-        return f"✅ {clean_path} синхронизирован (force push)!"
+        return "🚀 Все изменения успешно отправлены на GitHub!"
     except Exception as e:
-        return f"❌ Git Error: {str(e)}"
+        return f"❌ Ошибка Push: {str(e)}"
+
+def git_sync_logs_only():
+    """Оркестратор: работает ТОЛЬКО с файлом логов, не трогая код"""
+    log_file = "logs/ssh_audit.log"
+    try:
+        if not os.path.exists("git.txt"): return "❌ Нет токена"
+        with open("git.txt", "r") as f: token = f.read().strip()
+        
+        repo = Repo(REPO_PATH)
+        # 1. Скрываем (stash) другие изменения, чтобы не захватить код Прораба
+        stashed = False
+        if repo.is_dirty():
+            repo.git.stash('save', 'temp_before_logs')
+            stashed = True
+        
+        # 2. Добавляем и коммитим ТОЛЬКО логи
+        repo.git.add(log_file)
+        repo.index.commit(f"sys: update ssh logs {datetime.datetime.now().strftime('%Y-%m-%d %H:%M')}")
+        
+        # 3. Пушим логи
+        remote_url = repo.remotes.origin.url
+        clean_url = remote_url.split('@')[-1].replace("https://", "")
+        auth_url = f"https://{token}@{clean_url}"
+        repo.git.push(auth_url, repo.active_branch.name)
+        
+        # 4. Возвращаем изменения кода обратно
+        if stashed:
+            repo.git.stash('pop')
+            
+        return "✅ Логи SSH синхронизированы."
+    except Exception as e:
+        return f"❌ Ошибка логов: {str(e)}"
 def get_project_context():
     context_sections = []
     
@@ -428,10 +477,22 @@ with col_fore:
         
         st.rerun()
 
-    if st.button("📦 Global Sync (Code/ADR)", use_container_width=True):
-        with st.spinner("Pushing global changes..."):
-            summary = call_gemini(MODEL_PRO, f"History: {st.session_state.foreman_history[-2:]}", "Summarize for commit.")
-            st.toast(sync_to_git(f"feat: {summary[:50]}", "docs/ADR/"))
+    # Блок управления изменениями
+    st.markdown("---")
+    c1, c2 = st.columns(2)
+    
+    # Кнопка для Прораба (локально)
+    if c1.button("💾 Сохранить локально", use_container_width=True):
+        with st.spinner("Фиксация локально..."):
+            summary = call_gemini(MODEL_FLASH, f"History: {st.session_state.foreman_history[-2:]}", "Summarize for git commit.")
+            msg = git_local_commit(f"feat: {summary[:50]}")
+            st.toast(msg)
+
+    # Кнопка твоего подтверждения (в облако)
+    if c2.button("🚀 ПРИМЕНИТЬ (Push)", type="primary", use_container_width=True):
+        with st.spinner("Пушим на GitHub..."):
+            res = git_push_to_github()
+            st.success(res)
 
 with col_crit:
     st.markdown("### 🔍 Критик")
@@ -478,12 +539,11 @@ with col_orch:
     with st.container(height=400, border=True):
         st.code("\n".join(st.session_state.orch_history), language="bash")
 
-    # ВОЗВРАЩАЕМ КНОПКУ СИНХРОНИЗАЦИИ ЛОГОВ
+    # Кнопка Оркестратора только для логов
     if st.button("🔄 Sync SSH Logs to GitHub", use_container_width=True):
-        with st.spinner("Синхронизация логов аудита..."):
-            # Прямой вызов синхронизации для файла логов
-            result = sync_to_git("sys: update ssh_audit.log with recent operations", "logs/ssh_audit.log")
-            if "✅" in result:
-                st.success("Логи успешно отправлены в репозиторий.")
+        with st.spinner("Синхронизация логов..."):
+            res = git_sync_logs_only()
+            if "✅" in res:
+                st.toast(res)
             else:
-                st.error(result)
+                st.error(res)
