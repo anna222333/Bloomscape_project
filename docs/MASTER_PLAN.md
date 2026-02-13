@@ -1,96 +1,231 @@
-# MASTER PLAN — Bloomscape-like WooCommerce Store
+# MASTER PLAN
 
-## Purpose
-Capture the strategy for delivering a reproducible WooCommerce storefront inspired by Bloomscape, including documentation, demo artifacts, and runbooks that can be recreated on an Ubuntu VM with Docker.
+## 1. Document Purpose
 
-## Scope
-### In Scope
-- Docker Compose environment with WordPress + WooCommerce baseline and documented startup steps.
-- Theme or child-theme adjustments to deliver a Bloomscape-like UX for catalog browsing, product detail, search, and filters.
-- Sample catalog content (products, categories, attributes, variations, and imagery) suitable for portfolio demos.
-- Checkout lifecycle with at least one mocked payment option plus minimal shipping and tax handling for the demo scenario.
-- Operational guidance for backups, logging, monitoring links, and upgrade notes.
-- Security and compliance checklist for secrets handling, permission hygiene, and patching reminders.
-- Demo/portfolio artifacts (scenarios, screenshots, reproducible instructions) to validate the experience.
+This document defines the **master governance and planning framework** for the project.
 
-### Out of Scope
-- Custom headless architecture beyond the documented baseline (requires ADR to revisit).
-- ERP/CRM/1C or complex external API integrations.
-- Multi-warehouse/multi-vendor systems or advanced loyalty/referrals.
-- Production migrations, real domains, or live payments without a dedicated ADR.
+Its purpose is to:
+- describe the overall project structure and lifecycle,
+- define stages and their intent,
+- act as the top-level Source of Truth for planning,
+- provide navigation to all governance and execution documents.
 
-## Working Assumptions (validated)
-- Payments: sandbox/test-only, no live transactions.
-- Theme: existing theme with customization, no headless delivery.
-- Store locale: EN, currency EUR, shipping worldwide.
-- Demo catalog size: 20 products.
-- Evidence (screenshots/media) is stored in this repository with size controls.
+This document **does not** contain implementation details, technical instructions, or execution steps.
 
-## Prerequisites
-- Ubuntu VM with Docker and Docker Compose installed.
-- Access to this Git repository; Git + Markdown is the source of truth for docs.
-- A workspace (AppFlowy/Notion) for coordination; docs hosted here are canonical.
+---
 
-## Procedure
-### Context
-- Platform: WordPress + WooCommerce.
-- Environment: Ubuntu VM running Docker.
-- Execution: Codex agent implementing documentation.
-- Evidence focus: capture commands or configs in docs.
+## 2. Source of Truth (SoT)
 
-### Stage Map and Dependencies
-- **A. Foundation** — create repo dossier, docs standards, change control rules.
-- **B. Platform Baseline** — scripted Docker Compose launch, admin access, base configuration.
-- **C. Theme & UX** — theme/child-theme styling, navigation, Bloomscape-like patterns.
-- **D. Catalog & Content** — demo catalog, categories, attributes, imagery.
-- **E. Checkout & Payments** — end-to-end purchase path, tests for checkout.
-- **F. Operations & Observability** — backups, logging, health checks, runbook instructions.
-- **G. Security & Compliance** — hardening baseline, secret management, update controls.
-- **H. Demo & Portfolio** — demo narratives, screenshots, README "how to run".
-- **I. Handover & Runbook** — final runbook, known issues, handover documentation.
+The single Source of Truth for this project is the **Git repository** and its Markdown documents.
 
-### Dependencies
-- B depends on A.
-- C depends on B.
-- D depends on C (with partial parallel work but holds for acceptance).
-- E depends on B and D.
-- F depends on B; G depends on B and F (for logs and controls).
-- H depends on C, D, E, F, G.
-- I depends on H.
+Rules:
+- If a statement is not recorded in Git, it is not considered valid.
+- External tools (Notion, AppFlowy, diagrams, chats) are **supporting tools only**.
+- This document is authoritative over all stage-level plans.
 
-### Critical Path for Demo Store
-A → B → C → D → E → H → I.
+## Authoritative Paths (Source of Truth)
+- **Authoritative (SoT): repo root** for core governance docs:
+  - `MASTER_PLAN.md`, `WORK_BREAKDOWN.md`, `QUALITY_GATES.md`, `RISK_REGISTER.md`, `README.md`
+- `/docs/*` may contain mirrors or supporting materials, but **root is authoritative** unless an ADR states otherwise.
+- Stage Briefs: **authoritative naming scheme must be single-source** (see note in `docs/STAGE_BRIEFS/`).
 
-### Definition of Done per Stage
-- **A:** docs structure established, templates ready, change control rules documented.
-- **B:** `docker compose up` launches WP + WooCommerce, admin creds verified, base configs captured.
-- **C:** Bloomscape-like design skeleton implemented, core pages readable.
-- **D:** Catalog demo content present, categories and attributes functioning, imagery included.
-- **E:** Sample checkout completes end-to-end in a test scenario with acceptance checklist.
-- **F:** Backups/restores documented, health checks/logging available.
-- **G:** Baseline hardening applied, secrets excluded, security checklist satisfied.
-- **H:** Demo scripts, screenshots, README “how to run” reproducible.
-- **I:** Runbook, known issues, and handover checklist finalized.
+## Repository Structure (operational)
+- Root (authoritative governance SoT):
+  - `MASTER_PLAN.md`, `WORK_BREAKDOWN.md`, `QUALITY_GATES.md`, `RISK_REGISTER.md`, `README.md`, `CONTRIBUTING.md`
+- `/docs/` (supporting materials):
+  - `docs/STAGE_BRIEFS/` — stage briefs (authoritative naming scheme documented; avoid drift per QG-DOC1)
+  - `docs/DISCOVERY/` — Stage B baseline capture (environment, persistence, WP, Woo)
+  - `docs/EXPORTS/` — snapshots/evidence exports (when used)
+  - `docs/INSTRUCTIONS/` — stage chat instruction packets
+  - `docs/ADR/` — architecture decisions
+  - `docs/REPORTS/` — stage reports (one per stage when applicable)
 
-### Milestones
-- **M1 (post-B):** Platform boots with one command and WooCommerce is reachable.
-- **M2 (post-D):** Catalog content complete for review.
-- **M3 (post-E):** Working end-to-end order flow demonstrable.
-- **M4 (post-G):** Security and operations baseline documented.
-- **M5 (post-I):** Portfolio package and runbook complete.
+---
 
-## Verification
-- Confirm the repository structure with README and docs remains in sync with this plan.
-- Verify Docker Compose can bring up WordPress + WooCommerce (capture `docker compose up` output). TODO: evidence.
-- Validate catalog content and checkout tests; reference acceptance tests per stage briefs.
-- Review security and ops checklists for completeness relative to Quality Gates.
+## 3. Project Lifecycle Overview
 
-## Evidence
-- `docs/QUALITY_GATES.md` will capture reproducibility, acceptance tests, and metrics (link for detail).
-- TODO: capture `docker compose up` logs, WP admin login screenshot (if applicable), and checkout logs once ready.
-- TODO: document backups/logs output under `docs/STAGE_BRIEFS/F_...` evidence section.
+The project lifecycle is divided into **nine sequential stages**:
 
-## Troubleshooting
-- If `docker compose up` fails, inspect container logs (e.g., `docker compose logs wordpress` or `mysql`).
-- Missing assets should be addressed by verifying the catalog import instructions in the relevant stage brief.
-- For any blocked ADR decisions, reference `docs/ADR/` templates before adjusting scope.
+| Stage | Name        | Purpose (High-level) |
+|------:|------------|----------------------|
+| A | Foundation | Governance, documentation, rules, templates |
+| B | Discovery | Requirements, references, constraints |
+| C | Architecture | System and solution design |
+| D | UX/UI | Information architecture and design |
+| E | Build Prep | Technical preparation before build |
+| F | Implementation | Controlled execution |
+| G | Testing | Validation and quality assurance |
+| H | Release | Deployment and handover |
+| I | Closure | Final review and documentation |
+
+Each stage:
+- has a dedicated **Stage Brief**,
+- produces explicit deliverables,
+- has defined acceptance criteria.
+
+- - - -
+
+## Milestones
+
+- **M0:** Governance baseline in main (SoT=root, QG-DOC1 active, Stage B kickoff pack present)
+
+---
+
+---
+
+## 4. Stage Control Principles
+
+1. **Sequential execution**  
+   A stage may start only when the previous stage is formally closed.
+
+2. **Docs-first governance**  
+   No execution is allowed unless the governing documents exist and are approved.
+
+3. **Change Control mandatory**  
+   Any deviation from approved plans requires an ADR.
+
+4. **No implicit decisions**  
+   Decisions must be recorded explicitly in Git documents.
+
+---
+
+## 5. Change Control & ADR
+
+### 5.1 When an ADR is Required
+
+An Architecture Decision Record (ADR) is required when:
+- scope boundaries change,
+- architectural principles change,
+- tooling or platform choices change,
+- stage structure or lifecycle changes.
+
+### 5.2 ADR Authority
+
+- ADRs are binding once approved.
+- An unrecorded decision is considered **non-existent**.
+
+ADR templates are located in:
+```
+docs/ADR/
+```
+
+## 5.3 Change Control Policy (Operational Rules)
+
+These rules define **how changes are proposed, evaluated, and recorded**.
+
+### 5.3.1 Default Rule
+
+If a change is not explicitly approved and recorded, it is **not allowed**.
+
+### 5.3.2 ADR Triggers (ADR Required)
+
+An ADR is mandatory if the change affects any of the following:
+
+- **Scope boundaries** (what is in/out of scope for the project or a stage)
+- **Stage model** (stages A–I, sequencing, stage entry/exit rules)
+- **Deliverables** (adding/removing/renaming deliverables that change stage outputs)
+- **Architecture principles** (structure, integrations, major design choices)
+- **Tooling / platform choices** (hosting, WordPress/WooCommerce setup approach, CI/CD, major plugins/theme strategy)
+- **Quality model** (DoD, Acceptance Tests, Quality Gates, stage closure rules)
+- **Risk model** (risk acceptance rules, high-risk thresholds, mitigation commitments)
+
+### 5.3.3 Change Submission Requirements
+
+Every proposed change must include:
+- a clear description of what changes and why,
+- expected impact on deliverables and stages,
+- risks introduced or changed (reference `RISK_REGISTER.md`),
+- documents that must be updated if the change is accepted.
+
+### 5.3.4 Decision Outcomes
+
+A change proposal results in one of the following:
+- **Accepted** (recorded as ADR; dependent documents updated)
+- **Rejected** (reason recorded; no changes applied)
+- **Deferred** (recorded with conditions and revisit criteria)
+
+### 5.3.5 Consistency Update Rule (Hard Requirement)
+
+If an ADR is accepted, all impacted documents must be updated in the same change set, at minimum:
+- `MASTER_PLAN.md`
+- `WORK_BREAKDOWN.md`
+- relevant `docs/STAGE_BRIEFS/STAGE_<X>.md`
+- `QUALITY_GATES.md` (if quality rules are impacted)
+- `RISK_REGISTER.md` (if risk profile changes)
+
+### 5.3.6 No Silent Overrides
+
+No document may silently override another.
+If a conflict exists, it must be resolved via:
+- a superseding ADR, and
+- explicit updates to conflicting documents.
+
+### 5.3.7 Where ADRs Live
+
+ADR files are stored under:
+- `docs/ADR/`
+
+Use the template:
+- `docs/ADR/ADR-000_TEMPLATE.md`
+
+---
+
+## 6. Quality & Acceptance
+
+Quality control is enforced via:
+- Definition of Done (DoD) per stage,
+- Acceptance Tests (AT) per stage,
+- Explicit Quality Gates.
+
+The authoritative quality rules are defined in:
+```
+QUALITY_GATES.md
+```
+
+---
+
+## 7. Risk Governance
+
+Project risks are:
+- explicitly identified,
+- tracked,
+- reviewed per stage.
+
+The authoritative risk register is:
+```
+RISK_REGISTER.md
+```
+
+---
+
+## 8. Navigation
+
+Primary documents:
+- `README.md` — repository navigation
+- `WORK_BREAKDOWN.md` — stage-level work packages
+- `QUALITY_GATES.md` — acceptance and quality rules
+- `RISK_REGISTER.md` — risk tracking
+
+Stage-specific documents:
+```
+docs/STAGE_BRIEFS/
+```
+
+---
+
+## 9. Scope Boundary Statement
+
+This Master Plan:
+- defines **what is governed**, not **how it is executed**,
+- does **not** authorize implementation,
+- does **not** replace stage briefs.
+
+Any attempt to derive execution steps directly from this document is a **scope violation**.
+
+---
+
+## 10. Document Status
+
+Status: **Active**  
+Owner: Project Governance  
+Change control: **ADR required**
