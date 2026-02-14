@@ -1,9 +1,9 @@
-# Technical Requirements
+# Technical Requirements (Stage B)
 
 ## 1. Runtime Environment
 - **Container Runtime:** Docker Engine (Verified)
 - **Orchestration:** Docker Compose
-- **Host OS:** Linux (Ubuntu/Debian compatible)
+- **Host OS:** Linux (Ubuntu/Debian compatible) on Google Cloud VM
 
 ## 2. Application Stack (Target)
 - **CMS:** WordPress 6.5+ (Latest Stable)
@@ -14,9 +14,9 @@
 - **Web Server:** Nginx (Alpine based)
 
 ## 3. Development Tools
-- **CLI:** WP-CLI
-- **Dependency Manager:** Composer (for PHP), NPM (for theme assets)
-- **Version Control:** Git (Branching Model: Trunk-based / Feature branches)
+- **CLI:** WP-CLI (Primary configuration tool)
+- **Dependency Manager:** Composer (PHP), NPM (Theme assets)
+- **Version Control:** Git (Trunk-based)
 
 ## 4. Performance Constraints
 - Page Load Time: < 2.0s
