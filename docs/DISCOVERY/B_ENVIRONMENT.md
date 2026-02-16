@@ -1,20 +1,27 @@
-# Environment Specification (Stage B)
+# Environment Baseline (Stage B)
 
-## 1. Infrastructure Topology
-*   **Controller:** Local machine running `app.py` (Streamlit). Hosting the AI Agents.
-*   **Repository:** GitHub (Source of Truth).
-*   **Runtime Host:** Google Cloud Platform VM.
+## Status: PROVISIONED (As of Active Phase)
 
-## 2. Access Mechanism
-*   **Protocol:** SSH.
-*   **Authentication:** SSH Key (Managed via Google Secret Manager, injected into `app.py`).
-*   **User:** Defined in `.env` (VM_USER).
+## 1. Runtime Architecture
+The application is running in a containerized environment on a Remote Google Cloud VM.
 
-## 3. Directory Structure (Target on VM)
-*   **Root:** `/home/<VM_USER>/Bloomscape_project/` (Assumed - to be verified by Foreman).
-*   **Web Root:** TBD (Likely inside Docker container).
+### Core Stack
+- **Orchestration:** Docker Compose
+- **Web Server:** Nginx (Proxying PHP-FPM)
+- **Application:** WordPress (PHP 8.2)
+- **Database:** MySQL 8.0
+- **Cache:** Redis (Object Cache)
+- **CLI:** WP-CLI (Installed in app container)
 
-## 4. Current State Constraints
-*   The VM is live.
-*   The Orchestrator has root/sudo privileges (Assumed).
-*   **Network:** Port 80/443 must be open for web access.
+## 2. Persistence Strategy
+- **Database:** Docker Volume `db_data` -> Persists MySQL data.
+- **WordPress Content:** Docker Volume `wp_data` -> Persists `/var/www/html` (uploads, plugins, themes).
+- **Verification:** Automated audit confirmed data survival after container restart.
+
+## 3. Configuration & Secrets
+- **Environment Variables:** Managed via `.env` (excluded from git).
+- **Admin Credentials:** Generated during provisioning (See `ssh_audit.log` or secure storage). *Do not commit to repo.*
+
+## 4. Network Access
+- **Public Access:** Via VM Public IP (Port 80/443).
+- **Current Issue:** `siteurl` and `home` currently set to placeholder. Requires update to Public IP for correct routing.
