@@ -2,11 +2,36 @@ name: My First Action
 on: [push] # Запускать при каждом пуше
 
 jobs:
-  build:
-    runs-on: ubuntu-latest # Операционная система раннера
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4 # Копирует ваш код в раннер
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write' # Обязательно для работы с Google WIF
 
-      - name: Say Hello
-        run: echo "Hello, GitHub Actions!"
+    steps:
+      # 1. Загрузка кода из вашего репозитория в раннер
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # 2. Настройка Node.js (например, версия 20)
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm' # Опционально: ускоряет установку зависимостей
+
+      # 3. Авторизация в Google Cloud через WIF
+      - name: Authenticate to Google Cloud
+        id: 'auth'
+        uses: 'google-github-actions/auth@v2'
+        with:
+          # Замените на ваши данные из Google Console
+          workload_identity_provider: 'projects/123456789/locations/global/workloadIdentityPools/my-pool/providers/my-provider'
+          service_account: 'my-service-account@my-project.iam.gserviceaccount.com'
+
+      # 4. Авторизация в Docker Hub
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
