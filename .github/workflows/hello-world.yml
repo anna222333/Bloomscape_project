@@ -1,0 +1,12 @@
+name: My First Action
+on: [push] # Запускать при каждом пуше
+
+jobs:
+  build:
+    runs-on: ubuntu-latest # Операционная система раннера
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4 # Копирует ваш код в раннер
+
+      - name: Say Hello
+        run: echo "Hello, GitHub Actions!"
