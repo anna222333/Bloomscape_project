@@ -1,37 +1,39 @@
-name: My First Action
-on: [push] # Запускать при каждом пуше
+name: Bloomscape AI Orchestrator
+on: [push]
+
+permissions:
+  contents: 'write'
+  id-token: 'write'
 
 jobs:
-  build-and-deploy:
+  sync_and_run:
     runs-on: ubuntu-latest
-    permissions:
-      contents: 'read'
-      id-token: 'write' # Обязательно для работы с Google WIF
-
     steps:
-      # 1. Загрузка кода из вашего репозитория в раннер
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: Checkout Code
+        uses: actions/checkout@v4 
 
-      # 2. Настройка Node.js (например, версия 20)
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm' # Опционально: ускоряет установку зависимостей
-
-      # 3. Авторизация в Google Cloud через WIF
-      - name: Authenticate to Google Cloud
-        id: 'auth'
+      - id: 'auth'
         uses: 'google-github-actions/auth@v2'
         with:
-          # Замените на ваши данные из Google Console
-          workload_identity_provider: 'projects/123456789/locations/global/workloadIdentityPools/my-pool/providers/my-provider'
-          service_account: 'my-service-account@my-project.iam.gserviceaccount.com'
+          create_credentials_file: true 
+          workload_identity_provider: 'projects/103629433175/locations/global/workloadIdentityPools/bloomscape-pool/providers/github-provider'
+          service_account: 'bloom-agent-sa@positive-leaf-462823-h2.iam.gserviceaccount.com'
 
-      # 4. Авторизация в Docker Hub
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
+      - name: 'SSH Run'
+        uses: 'google-github-actions/ssh-compute@v0'
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          project_id: 'positive-leaf-462823-h2' 
+          instance_name: 'wp-ai-agent-server'
+          zone: 'us-central1-f'
+          command: 'cd /home/anna_sonny48/bloomscape-runtime && docker-compose up -d' 
+
+      - name: 'Run Agent Logic & Update Logs'
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ steps.auth.outputs.credentials_file_path }}
+        run: |
+          python -c "from google import genai; client = genai.Client(); print('Gemini Auth Success')"
+          
+          # 2. Настройка Git для записи логов (если нужно)
+          git config --global user.name "Bloomscape Orchestrator"
+          git config --global user.email "orch@bloomscape.ai"
+       
