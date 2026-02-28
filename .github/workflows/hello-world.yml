@@ -30,10 +30,26 @@ jobs:
       - name: 'Run Agent Logic & Update Logs'
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ steps.auth.outputs.credentials_file_path }}
+          PROJECT_ID: 'positive-leaf-462823-h2'
+          LOCATION: 'us-central1'
         run: |
-          python -c "from google import genai; client = genai.Client(); print('Gemini Auth Success')"
+          # Запуск без диагностических принтов
+          python -c "
+          import os
+          from google import genai
+          try:
+              client = genai.Client(
+                  vertexai=True, 
+                  project=os.getenv('PROJECT_ID'), 
+                  location=os.getenv('LOCATION')
+              )
+              print('Gemini Client Initialized')
+          except Exception as e:
+              print(f'Initialization Failed: {e}')
+              exit(1)
+          "
           
-          # 2. Настройка Git для записи логов (если нужно)
+          # Настройка Git
           git config --global user.name "Bloomscape Orchestrator"
           git config --global user.email "orch@bloomscape.ai"
        
