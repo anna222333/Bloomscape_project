@@ -1,54 +1,31 @@
-# Bloomscape Data Model (Baseline v1.0)
+# 1. Context & Purpose
+Mapping the Bloomscape reference site catalog structure to WooCommerce entities (Products, Categories, Attributes, Tags) to ensure an accurate structural baseline for Stage B.
 
-**Status:** APPROVED
-**Date:** 2026-02-16
-**Context:** Defines the taxonomy and structure for the initial WooCommerce setup.
+## 2. Categories (`product_cat`)
+Hierarchical structure for primary navigation:
+*   **Plants** (slug: `plants`)
+    *   Indoor Plants (`indoor-plants`)
+    *   Pet Friendly (`pet-friendly`)
+    *   New Arrivals (`new-arrivals`)
+*   **Pots & Planters** (slug: `pots`)
+*   **Care Tools** (slug: `care-tools`)
 
-## 1. Product Categories (Hierarchical Taxonomy)
-*Target Taxonomy: `product_cat`*
+## 3. Global Attributes (`wc_product_attribute`)
+Used for variable products and layered sidebar filtering (faceted search).
+*   **Size** (`pa_size`) 
+    *   Terms: Small (4-6 inch) `small`, Medium (8-10 inch) `medium`, Large (12+ inch) `large`, Extra Large `xl`
+*   **Difficulty** (`pa_difficulty`) 
+    *   Terms: Easy Care `easy`, Moderate `moderate`, Expert `expert`
+*   **Light Level** (`pa_light`) 
+    *   Terms: Low Light `low`, Indirect Bright `indirect`, Direct Sun `direct`
 
-- **Plants** (Parent) - `plants`
-    - **Indoor Plants** - `indoor-plants`
-    - **Outdoor Plants** - `outdoor-plants`
-    - **Pet Friendly** - `pet-friendly`
-    - **Easy Care** - `easy-care`
-- **Care & Tools** (Parent) - `care-tools`
-    - **Potting Mixes** - `potting-mixes`
-    - **Tools** - `tools`
-    - **Watering** - `watering`
-- **Pots & Planters** - `pots`
+## 4. Tags (`product_tag`)
+Non-hierarchical descriptors used for merchandising and specific behavioral traits:
+*   `Air Purifying`
+*   `Low Maintenance`
+*   `Trailing`
+*   `Upright`
 
-## 2. Product Attributes (Global Attributes)
-*Target Taxonomy: `pa_<slug>`*
-*Used for: Filtering, Variations*
-
-### A. Size (`pa_size`)
-- X-Small
-- Small
-- Medium
-- Large
-- X-Large
-
-### B. Light Requirement (`pa_light`)
-- Low Light
-- Partial Sunlight
-- Bright Direct Light
-
-### C. Difficulty (`pa_difficulty`)
-- No-Fuss (Beginner)
-- Easy
-- Moderate
-
-### D. Pet Toxicity (`pa_pet_friendly`)
-- Pet Friendly
-- Toxic to Pets
-
-## 3. Product Types Mapping
-- **Variable Product:** Live Plants (Variations: Pot Color, Size).
-- **Simple Product:** Tools, Soil bags.
-- **Grouped Product:** Plant Sets (Trios).
-
-## 4. Custom Fields (Meta Data)
-*Target: `wp_postmeta`*
-- `_botanical_name`: Scientific name (e.g., *Sansevieria*).
-- `_care_guide_url`: Link to specific care page.
+## 5. Product Types
+*   **Variable Products**: Core plants. Variations are built primarily on **Size** and/or **Pot Color**.
+*   **Simple Products**: Accessories, individual care tools, soil.
