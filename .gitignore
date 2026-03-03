@@ -2,3 +2,7 @@ git.txt
 bloom-key.json
 key.json
 .env
+.git
+diagnose_ssh.py
+chat_history.json
+debug_access.py
