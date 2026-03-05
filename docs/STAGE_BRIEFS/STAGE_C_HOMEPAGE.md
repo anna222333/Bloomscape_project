@@ -1,20 +1,34 @@
-# STAGE C: HOMEPAGE & GLOBAL STYLES
+# STAGE C: HOMEPAGE & GLOBAL STYLES (Active)
 
 ## 1. Stage Purpose
-Transform the functional baseline into a visual replica of the Bloomscape homepage using WordPress FSE (Full Site Editing).
+Transform the blank `bloomscape-child` theme into a visual replica of Bloomscape using Full Site Editing (FSE) standards.
 
-## 2. Goals
-1.  **Design System:** Implement Bloomscape's color palette and typography in `theme.json`.
-2.  **Structural Parts:** Build the Header (Logo + Nav) and Footer.
-3.  **Homepage Content:** Implement the key sections:
-    - Hero Section (Image + CTA).
-    - "Shop by Category" Grid.
-    - "New Arrivals" Product Query.
+## 2. Technical Strategy (Per ADR-008)
+- **Configuration:** All global styles (colors, fonts, spacing) MUST be defined in `theme.json`. Do not use hardcoded CSS for global values.
+- **Templates:** Use HTML block templates (`templates/front-page.html`) instead of PHP.
+- **Components:** Use Template Parts for Header/Footer.
 
-## 3. Technical Strategy
-- **File-Based Architecture:** All templates (`front-page.html`) and parts (`header.html`) will be created as files in the Docker container, NOT in the DB editor.
-- **Native Blocks:** Use Core Blocks (Group, Cover, Columns, Query Loop) wherever possible to avoid external dependencies.
-- **CSS Variables:** Drive all styling through `theme.json` presets.
+## 3. Work Breakdown
 
-## 4. Task List
+### Step C1: Global Styles (`theme.json`)
+- **Action:** Extract colors and typography from reference.
+- **Deliverable:** Updated `theme.json` in child theme.
+- **Validation:** Site verifies correct palette in Site Editor.
+
+### Step C2: Header & Navigation
+- **Action:** Create `parts/header.html`.
+- **Content:** Logo (Text/Image), Navigation Menu (Plants, Care, etc.), Cart Icon.
+- **Validation:** Header appears on all pages.
+
+### Step C3: Homepage Hero Section
+- **Action:** Create `templates/front-page.html`.
+- **Block Structure:** Cover Block (Full width image) + Heading + CTA Button.
+- **Assets:** Use existing assets in `docs/assets/` or placeholders.
+
+### Step C4: Product Categories Grid
+- **Action:** Add to Homepage.
+- **Block:** Columns Block or Query Loop.
+- **Data:** Display seeded categories (Plants, Care Tools).
+
+## 4. Acceptance Criteria (QG-C)
 - [
