@@ -1,44 +1,23 @@
-# Theme Architecture Analysis: Twenty Twenty-Five
+# Theme Architecture Analysis
 
-## 1. Executive Summary
-- **Target Theme:** Twenty Twenty-Five (v1.4)
-- **Architecture Type:** Block Theme (Full Site Editing / FSE)
-- **Configuration Engine:** `theme.json` (Global Styles & Settings)
-- **Template Engine:** HTML-based Block Templates
+**Date:** 2026-03-05
+**Target Theme:** Twenty Twenty-Five (v1.4)
+**Type:** Block Theme (Full Site Editing / FSE)
 
-## 2. Structural Analysis
-The theme adheres to the standard WordPress FSE structure found in `/var/www/html/wp-content/themes/twentytwentyfive`:
+## 1. Structure Overview
+Analysis of the runtime container confirmed the following structure:
 
-### 2.1 Core Configuration
-- **`theme.json`**: The central source of truth for:
-  - Color palettes (Bloomscape identity must be defined here).
-  - Typography settings.
-  - Layout constraints (content width, padding).
-  - Block defaults (button styles, heading sizes).
+- **`theme.json`**: Present. Acts as the central configuration engine (Global Styles, Settings).
+- **Templates**: HTML-based files in `templates/` (e.g., `home.html`, `single.html`).
+- **Parts**: HTML-based partials in `parts/` (e.g., `header.html`, `footer.html`).
+- **Patterns**: PHP-based patterns in `patterns/`.
 
-### 2.2 Template Hierarchy (`/templates`)
-HTML files defining the block structure for specific views:
-- `home.html`: Homepage layout.
-- `single.html`: Single post layout.
-- `archive.html`: General archive layout.
-- `404.html`: Error page.
-- `search.html`: Search results.
+## 2. Inheritance Strategy
+Since this is an FSE theme, the classic PHP template hierarchy is replaced by block templates. However, the **Child Theme** mechanism still applies for:
+1.  `theme.json` merging (Child overrides Parent).
+2.  `style.css` (CSS overrides).
+3.  `functions.php` (Custom PHP logic).
+4.  Custom Templates (Child `templates/home.html` overrides Parent).
 
-### 2.3 Template Parts (`/parts`)
-Reusable semantic sections:
-- `header.html` / `header-large-title.html`
-- `footer.html` / `footer-newsletter.html`
-- `sidebar.html`
-
-### 2.4 Patterns (`/patterns`)
-PHP files containing block markup for complex UI compositions (e.g., banners, pricing tables).
-
-## 3. WooCommerce Integration Strategy
-As a Block Theme, Twenty Twenty-Five delegates WooCommerce rendering to Block templates.
-- **Constraint:** Classic PHP hooks (`woocommerce_before_main_content`) behave differently or require specific block equivalents.
-- **Requirement:** Bloomscape's specific product layouts (e.g., "Care Difficulty" badges) must be implemented as **Block Patterns** or **Custom Blocks**, not hardcoded PHP templates, to maintain FSE compatibility.
-
-## 4. Customization Vector
-To align with Bloomscape's design system without forking the core theme:
-1.  **Child Theme:** Essential for `functions.php` (custom logic) and `style.css`.
-2.  **`theme.json` Override:** The child theme's `theme.json` will merge with the parent's, overriding specific values (colors, fonts).
+## 3. Conclusion
+We will provision `bloomscape-child` to encapsulate all Bloomscape-specific customizations, ensuring the parent theme can be updated securely.
