@@ -1,13 +1,14 @@
 ## PROJECT STATUS
-- **Current Stage:** Stage B (Discovery & Baseline)
-- **Status:** **VERIFICATION** (Child Theme Provisioned)
-- **Next Milestone:** Stage Close & Stage C Kickoff
+- **Current Stage:** Stage C (Construction: Homepage & Global Styles)
+- **Status:** **KICKOFF** (Defining Global Styles)
+- **Next Milestone:** Homepage Visual Verification
 
 ## RECENT ACHIEVEMENTS
-- **2026-03-05:** Theme Architecture Analysis completed (`docs/DISCOVERY/THEME_ARCHITECTURE.md`).
-- **2026-03-05:** Child Theme `bloomscape-child` provisioned on Runtime.
-- **2026-03-05:** Taxonomy Seeding verified.
+- **2026-03-05:** Stage B completed. WordPress URL fixed (`http://35.223.255.227`).
+- **2026-03-05:** Child Theme `bloomscape-child` active.
+- **2026-03-05:** Taxonomy (Categories/Attributes) seeded via CLI.
 
 ## STRATEGIC PRIORITIES
-1.  **Platform Activation:** Activate `bloomscape-child` and verify FSE capabilities.
-2.  **Stage Close:** Validate all Stage B Success Criteria.
+1.  **Global Styles:** Configure `theme.json` (Colors, Typography, Layout).
+2.  **Header/Footer:** Create template parts matching the reference.
+3.  **Homepage Layout:** Build `front-page.html` with Hero, Category Grid, and Product Sections.
